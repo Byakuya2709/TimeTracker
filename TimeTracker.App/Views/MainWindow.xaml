@@ -26,38 +26,51 @@
         </Grid.ColumnDefinitions>
 
         <Border Grid.Row="1"
-     Grid.Column="1"
-     CornerRadius="20"
-     BorderBrush="#44FFFFFF"
-     BorderThickness="1"
-     Background="#CCF5F7F6"
-      VerticalAlignment="Top"
-                 Width="260"
-                Margin="0,8,0,0"
- Height="40"
-       Visibility="{Binding HasNotification,
+        Grid.Column="1"
+        CornerRadius="20"
+        BorderBrush="#44FFFFFF"
+        BorderThickness="1"
+        Background="#CCF5F7F6"
+        VerticalAlignment="Top"
+        Width="260"
+        Margin="0,8,0,0"
+        Visibility="{Binding HasNotification,
                      Converter={StaticResource BooleanToVisibilityConverter}}">
 
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <Path Data="M8,0 A8,8 0 1,0 8,16 A8,8 0 1,0 8,0 Z 
+            <Grid Margin="16,0,8,0">
+                <!-- thay StackPanel bằng Grid -->
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- icon -->
+                    <ColumnDefinition Width="*"/>
+                    <!-- text -->
+                </Grid.ColumnDefinitions>
+
+                <Path Grid.Column="0"
+              Data="M8,0 A8,8 0 1,0 8,16 A8,8 0 1,0 8,0 Z 
                     M7.2,4 L8.8,4 L8.8,9 L7.2,9 L7.2,4 Z 
                     M7.2,10 L8.8,10 L8.8,11.6 L7.2,11.6 L7.2,10 Z"
               Fill="#1A1C1C"
               Width="16" Height="16"
-                    Margin="16,0,8,0"/>
-                <TextBlock FontSize="12"
+              VerticalAlignment="Center"
+              Margin="0,0,8,0"/>
+
+                <TextBlock Grid.Column="1"
+                   FontSize="12"
                    FontWeight="SemiBold"
                    Foreground="#1A1C1C"
                    VerticalAlignment="Center"
-                   Margin="0,0,0,0"
+                   TextWrapping="Wrap"
+                           Padding="0,10"
                    Text="{Binding Notification}" />
-            </StackPanel>
+            </Grid>
         </Border>
 
         <Border Grid.Row="0"
         Grid.Column="1"
         Width="260"
-        Height="275"
+        Height="Auto"
+        MinHeight="340"
         HorizontalAlignment="Left"
         VerticalAlignment="Bottom"
         CornerRadius="20"
@@ -68,6 +81,7 @@
 
             <Grid Margin="12">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -97,7 +111,7 @@
                            FontWeight="SemiBold"
                            Foreground="#3E4942"
                            HorizontalAlignment="Center"
-                           Text="ELAPSED TIME" />
+                          Text="TOTAL RECORDING" />
                 </StackPanel>
 
                 <Border Grid.Row="2"
@@ -143,10 +157,30 @@
 
                     </Grid>
                 </Border>
+                <Border Grid.Row="3"
+                    Margin="0,12,0,0"
+                    Padding="10,8"
+                    CornerRadius="12"
+                    Background="#4DFFFFFF"
+                    BorderBrush="#22000000"
+                    BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock FontSize="10"
+                               FontWeight="SemiBold"
+                               Foreground="#3E4942"
+                               Text="TOP 3 APPS" />
+                        <TextBlock Margin="0,6,0,0"
+                               FontSize="12"
+                               Foreground="#1A1C1C"
+                               Text="{Binding TopAppsSummary}"
+                               TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+
                 <Border 
     BorderBrush="#33000000"
     BorderThickness="0,0.3,0,0"
-                 Grid.Row="3"
+                 Grid.Row="4"
                    Margin="0,12,0,0">
                     <Grid Margin="0,8,0,0">
                         <Grid.ColumnDefinitions>
@@ -159,6 +193,8 @@
                         <!-- START -->
                         <RadioButton Grid.Column="0"
              GroupName="PlayerControls"
+             IsChecked="{Binding IsRecording, Mode=OneWay}"
+             Command="{Binding StartCommand}"
              Style="{StaticResource ControlButtonStyle}">
 
                             <Viewbox Width="14" Height="14">
@@ -172,11 +208,13 @@ Data="M2,0 L12,7 L2,14 Z"/>
 
                         <RadioButton Grid.Column="1"
              GroupName="PlayerControls"
+             IsChecked="{Binding IsPaused, Mode=OneWay}"
+             Command="{Binding PauseCommand}"
              Style="{StaticResource ControlButtonStyle}">
 
                             <Viewbox Width="14" Height="14">
                                 <Path Style="{StaticResource IconPathStyle}"
-Data="M2,0 L12,7 L2,14 Z"/>
+Data="M1,0 L5,0 L5,14 L1,14 Z M9,0 L13,0 L13,14 L9,14 Z"/>
                             </Viewbox>
 
                         </RadioButton>
@@ -184,11 +222,13 @@ Data="M2,0 L12,7 L2,14 Z"/>
                         <!-- STOP -->
                         <RadioButton Grid.Column="2"
              GroupName="PlayerControls"
+             IsChecked="{Binding IsStopped, Mode=OneWay}"
+             Command="{Binding StopCommand}"
              Style="{StaticResource ControlButtonStyle}">
 
                             <Viewbox Width="14" Height="14">
                                 <Path Style="{StaticResource IconPathStyle}"
-          Data="M2,0 L12,7 L2,14 Z"/>
+          Data="M2,2 L12,2 L12,12 L2,12 Z"/>
                             </Viewbox>
 
                         </RadioButton>
