@@ -5,8 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Time Tracker Overlay"
-        Width="260"
-        Height="240"
+   SizeToContent="WidthAndHeight"
         WindowStartupLocation="Manual"
         WindowStyle="None"
         ResizeMode="NoResize"
@@ -14,82 +13,191 @@
         Topmost="True"
         AllowsTransparency="True"
         Background="Transparent">
-    <Border CornerRadius="20"
-            BorderBrush="#44FFFFFF"
-            BorderThickness="1"
-            Background="#CCF5F7F6"
-            MouseLeftButtonDown="OverlayBorder_MouseLeftButtonDown">
-        <Grid Margin="12">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
 
-            <Border Grid.Row="0"
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Row="1"
+     Grid.Column="1"
+     CornerRadius="20"
+     BorderBrush="#44FFFFFF"
+     BorderThickness="1"
+     Background="#CCF5F7F6"
+      VerticalAlignment="Top"
+                 Width="260"
+                Margin="0,8,0,0"
+ Height="40"
+       Visibility="{Binding HasNotification,
+                     Converter={StaticResource BooleanToVisibilityConverter}}">
+
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Path Data="M8,0 A8,8 0 1,0 8,16 A8,8 0 1,0 8,0 Z 
+                    M7.2,4 L8.8,4 L8.8,9 L7.2,9 L7.2,4 Z 
+                    M7.2,10 L8.8,10 L8.8,11.6 L7.2,11.6 L7.2,10 Z"
+              Fill="#1A1C1C"
+              Width="16" Height="16"
+                    Margin="16,0,8,0"/>
+                <TextBlock FontSize="12"
+                   FontWeight="SemiBold"
+                   Foreground="#1A1C1C"
+                   VerticalAlignment="Center"
+                   Margin="0,0,0,0"
+                   Text="{Binding Notification}" />
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="0"
+        Grid.Column="1"
+        Width="260"
+        Height="275"
+        HorizontalAlignment="Left"
+        VerticalAlignment="Bottom"
+        CornerRadius="20"
+        BorderBrush="#44FFFFFF"
+        BorderThickness="1"
+        Background="#CCF5F7F6"
+        MouseLeftButtonDown="OverlayBorder_MouseLeftButtonDown">
+
+            <Grid Margin="12">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0"
                     Padding="10,8"
                     CornerRadius="12"
                     Background="#55FFFFFF"
                     BorderBrush="#22000000"
                     BorderThickness="0,0,0,1">
-                <TextBlock FontSize="12"
+                    <TextBlock FontSize="14"
                            FontWeight="SemiBold"
                            Foreground="#1A1C1C"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
                            Text="{Binding CurrentAppName}" />
-            </Border>
+                </Border>
 
-            <StackPanel Grid.Row="1" Margin="0,14,0,0" HorizontalAlignment="Center">
-                <TextBlock FontSize="34"
-                           FontWeight="Light"
+                <StackPanel Grid.Row="1" Margin="0,14,0,0" HorizontalAlignment="Center">
+                    <TextBlock FontSize="34"
+                           FontWeight="SemiBold"
                            Foreground="#1A1C1C"
                            Text="{Binding ElapsedTime}" />
-                <TextBlock FontSize="10"
+                    <TextBlock FontSize="10"
                            FontWeight="SemiBold"
                            Foreground="#3E4942"
                            HorizontalAlignment="Center"
                            Text="ELAPSED TIME" />
-            </StackPanel>
+                </StackPanel>
 
-            <Border Grid.Row="2"
+                <Border Grid.Row="2"
                     Margin="0,14,0,0"
                     Padding="12"
                     CornerRadius="14"
                     Background="#66FFFFFF"
                     BorderBrush="#33FFFFFF"
                     BorderThickness="1">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
 
-                    <Border Width="52"
+                        <Border Width="52"
                             Height="52"
                             CornerRadius="26"
                             BorderBrush="#006947"
                             BorderThickness="2"
                             Background="#22FFFFFF">
-                        <TextBlock HorizontalAlignment="Center"
+                            <TextBlock HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
                                    FontSize="11"
                                    FontWeight="Bold"
                                    Foreground="#006947"
                                    Text="{Binding FocusScoreText}" />
-                    </Border>
+                        </Border>
 
-                    <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
-                        <TextBlock FontSize="10"
+                        <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock FontSize="10"
                                    FontWeight="Medium"
                                    Foreground="#3E4942"
                                    Text="FOCUS SCORE" />
-                        <TextBlock FontSize="13"
+                            <TextBlock FontSize="13"
                                    FontWeight="SemiBold"
                                    Foreground="#1A1C1C"
                                    Text="{Binding FocusSummary}" />
-                    </StackPanel>
-                </Grid>
-            </Border>
+                        </StackPanel>
 
-        </Grid>
-    </Border>
+
+
+
+                    </Grid>
+                </Border>
+                <Border 
+    BorderBrush="#33000000"
+    BorderThickness="0,0.3,0,0"
+                 Grid.Row="3"
+                   Margin="0,12,0,0">
+                    <Grid Margin="0,8,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        
+                        <!-- START -->
+                        <RadioButton Grid.Column="0"
+             GroupName="PlayerControls"
+             Style="{StaticResource ControlButtonStyle}">
+
+                            <Viewbox Width="14" Height="14">
+                                <Path Style="{StaticResource IconPathStyle}"
+Data="M2,0 L12,7 L2,14 Z"/>
+                            </Viewbox>
+
+                        </RadioButton>
+
+                        <!-- PAUSE -->
+
+                        <RadioButton Grid.Column="1"
+             GroupName="PlayerControls"
+             Style="{StaticResource ControlButtonStyle}">
+
+                            <Viewbox Width="14" Height="14">
+                                <Path Style="{StaticResource IconPathStyle}"
+Data="M2,0 L12,7 L2,14 Z"/>
+                            </Viewbox>
+
+                        </RadioButton>
+
+                        <!-- STOP -->
+                        <RadioButton Grid.Column="2"
+             GroupName="PlayerControls"
+             Style="{StaticResource ControlButtonStyle}">
+
+                            <Viewbox Width="14" Height="14">
+                                <Path Style="{StaticResource IconPathStyle}"
+          Data="M2,0 L12,7 L2,14 Z"/>
+                            </Viewbox>
+
+                        </RadioButton>
+
+
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
+
+    </Grid>
 </Window>

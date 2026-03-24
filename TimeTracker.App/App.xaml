@@ -3,7 +3,21 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:TimeTracker.App"
              StartupUri="Views/MainWindow.xaml">
+
     <Application.Resources>
-         
+        <ResourceDictionary>
+
+            <!-- Gộp resource ngoài -->
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resourses/Colors.xaml"/>
+                <ResourceDictionary Source="Resourses/Fonts.xaml"/>
+                <ResourceDictionary Source="Components/RadioButton.xaml"/>
+                <ResourceDictionary Source="Components/IconPathStyle.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Converter -->
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

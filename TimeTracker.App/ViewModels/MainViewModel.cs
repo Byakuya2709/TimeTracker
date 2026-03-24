@@ -13,6 +13,7 @@ public class MainViewModel : ViewModelBase, IDisposable
     private string _elapsedTime = "00:00:00";
     private int _focusScore;
     private string _focusSummary = "Settling In";
+    public bool HasNotification => !string.IsNullOrEmpty(Notification);
 
     public MainViewModel(ActivityTracker activityTracker)
     {
@@ -26,6 +27,28 @@ public class MainViewModel : ViewModelBase, IDisposable
         _timer.Start();
     }
 
+    public string Notification
+    {
+        get
+        {
+            if (TimeSpan.TryParse(ElapsedTime, out var time))
+            {
+                if (time.TotalSeconds > 2)
+                    return "Break Suggest\n in 15 Minutes";
+
+                if (time.TotalSeconds > 60)
+                    return "Break Suggest..";
+
+                if (time.TotalMinutes > 5)
+                    return "Shoud take a break..";
+
+                return "";
+            }
+
+            return "";
+        }
+    }
+
     public string CurrentAppName
     {
         get => _currentAppName;
@@ -35,7 +58,14 @@ public class MainViewModel : ViewModelBase, IDisposable
     public string ElapsedTime
     {
         get => _elapsedTime;
-        private set => SetProperty(ref _elapsedTime, value);
+        private set
+        {
+            if (SetProperty(ref _elapsedTime, value))
+            {
+                OnPropertyChanged(nameof(Notification));
+                OnPropertyChanged(nameof(HasNotification));
+            }
+        }
     }
 
     public int FocusScore
