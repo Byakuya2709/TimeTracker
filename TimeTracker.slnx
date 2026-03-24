@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="TimeTracker.App/TimeTracker.App.csproj" />
+  <Project Path="TimeTracker.Application/TimeTracker.Application.csproj" />
+  <Project Path="TimeTracker.Domain/TimeTracker.Domain.csproj" />
+  <Project Path="TimeTracker.Infrastructure/TimeTracker.Infrastructure.csproj" />
+</Solution>
