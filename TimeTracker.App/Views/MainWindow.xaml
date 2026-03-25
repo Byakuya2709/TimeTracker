@@ -42,10 +42,20 @@
                                  Command="{Binding ShowOverviewCommand}"
                                  Style="{StaticResource ControlButtonStyle}">
 
-                        <TextBlock FontSize="14" FontWeight="SemiBold" Foreground="#F3FAEF" Text="Overview">
-                               <materialDesign:PackIcon Kind="ViewDashboard" Width="18" Height="18" Margin="0,0,8,-4"
-  Foreground="White"/>
-                        </TextBlock>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <materialDesign:PackIcon 
+                            Kind="Settings"
+                            Width="18"
+                            Height="18"
+                            Margin="0,0,8,0"
+                            Foreground="White"/>
+
+                            <TextBlock 
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                Foreground="#F3FAEF"
+                                Text="Setting"/>
+                        </StackPanel>
 
                     </RadioButton>
 
@@ -55,13 +65,21 @@
                                  Command="{Binding ShowSessionsCommand}"
                                  Style="{StaticResource ControlButtonStyle}">
 
-                      
-                            <TextBlock FontSize="14" FontWeight="SemiBold" Foreground="#F3FAEF" Text="History">
-                                      <materialDesign:PackIcon 
-                                      Kind="History" 
-                                          Width="18" Height="18" Margin="0,0,8,-4"
+
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <materialDesign:PackIcon 
+                                    Kind="History"
+                                    Width="18"
+                                    Height="18"
+                                    Margin="0,0,8,0"
                                     Foreground="White"/>
-                            </TextBlock>
+
+                            <TextBlock 
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                Foreground="#F3FAEF"
+                                Text="History"/>
+                        </StackPanel>
 
                     </RadioButton>
 
@@ -69,13 +87,20 @@
                                  IsChecked="{Binding IsSettingsPage, Mode=OneWay}"
                                  Command="{Binding ShowSettingsCommand}"
                                  Style="{StaticResource ControlButtonStyle}">
-                        <TextBlock FontSize="14" FontWeight="SemiBold" Foreground="#F3FAEF" Text="Setting">
-                             <materialDesign:PackIcon 
-                                 Kind="Settings" 
-                                 Width="18" Height="18" 
-                                 Margin="0,0,8,-4"
-                                Foreground="White"/>
-                        </TextBlock>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <materialDesign:PackIcon 
+                     Kind="Settings"
+                     Width="18"
+                     Height="18"
+                     Margin="0,0,8,0"
+                     Foreground="White"/>
+
+                            <TextBlock 
+                 FontSize="14"
+                 FontWeight="SemiBold"
+                 Foreground="#F3FAEF"
+                 Text="Setting"/>
+                        </StackPanel>
                     </RadioButton>
                 </StackPanel>
             </Grid>
@@ -113,7 +138,7 @@
 
                             <Style TargetType="Button" x:Key="SessionActionButtonStyle">
                                 <Setter Property="Foreground" Value="#1D3022"/>
-                                <Setter Property="Background" Value="#EDF3EA"/>
+                                <Setter Property="Background" Value="#1D3022"/>
                                 <Setter Property="BorderBrush" Value="#CFDACB"/>
                                 <Setter Property="BorderThickness" Value="1"/>
                                 <Setter Property="Padding" Value="14,8"/>
@@ -130,11 +155,10 @@
                                             </Border>
                                             <ControlTemplate.Triggers>
                                                 <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter TargetName="ButtonBorder" Property="Background" Value="#E3EDE0"/>
-                                                    <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="#B8CAB3"/>
+                                                    <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.85"/>
                                                 </Trigger>
                                                 <Trigger Property="IsPressed" Value="True">
-                                                    <Setter TargetName="ButtonBorder" Property="Background" Value="#D8E4D4"/>
+                                                    <Setter TargetName="ButtonBorder" Property="Opacity" Value="1"/>
                                                 </Trigger>
                                                 <Trigger Property="IsEnabled" Value="False">
                                                     <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.55"/>
@@ -379,9 +403,11 @@
                                 </StackPanel>
 
                                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
-                                    <DatePicker Width="156" Margin="0,0,8,0" SelectedDate="{Binding SelectedWeekDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                    <Button Width="100" Height="34" Margin="0,0,8,0" Style="{StaticResource SessionActionButtonStyle}" Command="{Binding RefreshSessionsCommand}" Content="Refresh"/>
-                                    <Button Width="146" Height="34" Style="{StaticResource SessionActionButtonStyle}" Background="#F3E8E8" BorderBrush="#D8C0C0" Foreground="#6A2E2E" Command="{Binding DeleteSelectedSessionCommand}" Content="Delete selected"/>
+                                    <DatePicker 
+                                        Style="{StaticResource ModernDatePicker}"
+                                        SelectedDate="{Binding SelectedWeekDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <Button Width="100" Height="34" Margin="0,0,8,0" Style="{StaticResource SessionActionButtonStyle}" Foreground="White" Command="{Binding RefreshSessionsCommand}" Content="Refresh"/>
+                                    <Button Width="146" Height="34" Style="{StaticResource SessionActionButtonStyle}" Background="DarkRed" BorderBrush="#D8C0C0" Foreground="White" Command="{Binding DeleteSelectedSessionCommand}" Content="Delete selected"/>
                                 </StackPanel>
                             </DockPanel>
 

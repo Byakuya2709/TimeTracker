@@ -79,6 +79,15 @@ public partial class MainViewModel
         TopAppsSummary = BuildTopAppsSummary(snapshot.TopApps);
     }
 
+    private static string FormatDuration2(TimeSpan duration)
+    {
+        // Nếu giờ = 0 thì chỉ hiện phút
+        if (duration.TotalHours < 1)
+            return $"{duration.Minutes}m";
+
+        return $"{(int)duration.TotalHours}h {duration.Minutes}m";
+    }
+
     private static string BuildTopAppsSummary(IReadOnlyList<AppUsage> topApps)
     {
         string[] lines = new string[3];
@@ -88,11 +97,11 @@ public partial class MainViewModel
             if (i < topApps.Count)
             {
                 AppUsage usage = topApps[i];
-                lines[i] = $"{i + 1}. {usage.AppName} {FormatDuration(usage.Duration)}";
+                lines[i] = $"{i + 1}. {usage.AppName} : {FormatDuration2(usage.Duration)}";
             }
             else
             {
-                lines[i] = $"{i + 1}. -- 00:00";
+                lines[i] = $"{i + 1}. -- 0m"; // 0h thì bỏ, chỉ hiện 0 phút
             }
         }
 
