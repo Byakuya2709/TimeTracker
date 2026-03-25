@@ -5,17 +5,24 @@ namespace TimeTracker.Application.UseCases.Tracking;
 public static class TrackingRules
 {
     public const string UnassignedAppName = "Unassigned";
+    public const string IdleAppName = "Idle";
 
     public static bool CanPersistActivity(string trackedAppName)
     {
-        return !trackedAppName.Equals(UnassignedAppName, StringComparison.OrdinalIgnoreCase);
+        return !IsUnassignedAppName(trackedAppName)
+            && !IsIdleAppName(trackedAppName);
     }
 
     public static string ResolveTrackedAppName(string activeAppName)
     {
+        if (IsIdleAppName(activeAppName))
+        {
+            return IdleAppName;
+        }
+
         return IsUnknownOrEmpty(activeAppName)
             ? UnassignedAppName
-            : activeAppName;
+            : activeAppName.Trim();
     }
 
     private static bool IsUnknownOrEmpty(string appName)
@@ -24,12 +31,24 @@ public static class TrackingRules
             || appName.Equals("Unknown App", StringComparison.OrdinalIgnoreCase);
     }
 
+    public static bool IsUnassignedAppName(string appName)
+    {
+        return appName.Equals(UnassignedAppName, StringComparison.OrdinalIgnoreCase);
+    }
+
+    public static bool IsIdleAppName(string appName)
+    {
+        return appName.Equals(IdleAppName, StringComparison.OrdinalIgnoreCase);
+    }
+
     public static string GetDisplayAppName(TrackingSessionState state)
     {
         return state.State switch
         {
-            TrackingState.Running => state.LastTrackedAppName.Equals(UnassignedAppName, StringComparison.OrdinalIgnoreCase)
+            TrackingState.Running => IsUnassignedAppName(state.LastTrackedAppName)
                 ? "Waiting for app switch"
+                : IsIdleAppName(state.LastTrackedAppName)
+                    ? "Idle"
                 : state.LastTrackedAppName,
             TrackingState.Paused => "Paused",
             _ => "Ready"

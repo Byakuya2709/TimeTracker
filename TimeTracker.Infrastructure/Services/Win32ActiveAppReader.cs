@@ -8,6 +8,9 @@ namespace TimeTracker.Infrastructure.Services;
 public class Win32ActiveAppReader : IActiveAppReader
 {
     private const string UnknownAppName = "Unknown App";
+    private const string IdleAppName = "Idle";
+    private const int DefaultIdleThresholdSeconds = 300;
+
     private const int GaRootowner = 3;
     private const uint GwHwndnext = 2;
     private const uint GwHwndprev = 3;
@@ -21,11 +24,42 @@ public class Win32ActiveAppReader : IActiveAppReader
     private string _lastKnownAppDisplayName = UnknownAppName;
     private IntPtr _lastForegroundWindow = IntPtr.Zero;
     private string _lastResolvedAppName = UnknownAppName;
+    private readonly uint _idleThresholdMilliseconds;
 
     private static readonly ConcurrentDictionary<int, string> ProcessDisplayNameCache = new();
 
+    public Win32ActiveAppReader()
+        : this(TimeSpan.FromSeconds(DefaultIdleThresholdSeconds))
+    {
+    }
+
+    public Win32ActiveAppReader(TimeSpan idleThreshold)
+    {
+        double thresholdMilliseconds = idleThreshold.TotalMilliseconds;
+        if (double.IsNaN(thresholdMilliseconds)
+            || double.IsInfinity(thresholdMilliseconds)
+            || thresholdMilliseconds < 1000)
+        {
+            thresholdMilliseconds = TimeSpan.FromSeconds(DefaultIdleThresholdSeconds).TotalMilliseconds;
+        }
+
+        if (thresholdMilliseconds > uint.MaxValue)
+        {
+            thresholdMilliseconds = uint.MaxValue;
+        }
+
+        _idleThresholdMilliseconds = (uint)thresholdMilliseconds;
+    }
+
     public string GetActiveAppName()
     {
+        if (IsUserIdle(_idleThresholdMilliseconds))
+        {
+            _lastForegroundWindow = IntPtr.Zero;
+            _lastResolvedAppName = IdleAppName;
+            return IdleAppName;
+        }
+
         IntPtr foregroundWindow = GetForegroundWindow();
         if (foregroundWindow == IntPtr.Zero)
         {
@@ -270,6 +304,30 @@ public class Win32ActiveAppReader : IActiveAppReader
         return result == 0 && cloaked != 0;
     }
 
+    private static bool IsUserIdle(uint idleThresholdMilliseconds)
+    {
+        LastInputInfo lastInputInfo = new()
+        {
+            cbSize = (uint)Marshal.SizeOf<LastInputInfo>()
+        };
+
+        if (!GetLastInputInfo(ref lastInputInfo))
+        {
+            return false;
+        }
+
+        uint tickNow = GetTickCount();
+        uint idleMilliseconds = unchecked(tickNow - lastInputInfo.dwTime);
+        return idleMilliseconds >= idleThresholdMilliseconds;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct LastInputInfo
+    {
+        public uint cbSize;
+        public uint dwTime;
+    }
+
     [DllImport("user32.dll")]
     private static extern IntPtr GetForegroundWindow();
 
@@ -304,4 +362,11 @@ public class Win32ActiveAppReader : IActiveAppReader
 
     [DllImport("user32.dll")]
     private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint processId);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool GetLastInputInfo(ref LastInputInfo plii);
+
+    [DllImport("kernel32.dll")]
+    private static extern uint GetTickCount();
 }

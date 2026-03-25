@@ -14,15 +14,15 @@ namespace TimeTracker.App;
 public partial class MainWindow : Window
 {
     private readonly MainViewModel _viewModel;
-
     public MainWindow()
     {
         InitializeComponent();
 
         string databasePath = Path.Combine(AppContext.BaseDirectory, "timetracker.db");
+        TimeSpan idleThreshold = ResolveIdleThreshold();
 
         ActivityTracker tracker = new(
-            new Win32ActiveAppReader(),
+            new Win32ActiveAppReader(idleThreshold),
             new SqliteActivityLogStore(databasePath));
 
         _viewModel = new MainViewModel(tracker);
@@ -30,6 +30,17 @@ public partial class MainWindow : Window
 
         Loaded += OnLoaded;
         Closed += OnClosed;
+    }
+
+    private static TimeSpan ResolveIdleThreshold()
+    {
+        string? secondsValue = Environment.GetEnvironmentVariable("TIMETRACKER_IDLE_SECONDS") ?? "300";
+        if (!int.TryParse(secondsValue, out int seconds) || seconds < 1)
+        {
+            return TimeSpan.FromMinutes(5);
+        }
+
+        return TimeSpan.FromSeconds(seconds);
     }
 
     private void OnLoaded(object sender, RoutedEventArgs e)

@@ -1,12 +1,11 @@
-using TimeTracker.Application.Abstractions;
 using TimeTracker.Application.Models;
 
 namespace TimeTracker.Application.UseCases.Tracking;
 
 public class PauseTrackingUseCase
 {
-    // Pauses active tracking and safely closes any open persisted activity row.
-    public void Execute(TrackingSessionState state, IActivityLogStore activityLogStore, DateTime now)
+    // Pauses active tracking and keeps in-memory session data for resume.
+    public void Execute(TrackingSessionState state, DateTime now)
     {
         if (state.State != TrackingState.Running)
         {
@@ -14,7 +13,6 @@ public class PauseTrackingUseCase
         }
 
         SessionTimeAccumulator.ApplyElapsedTime(state, now);
-        TrackingPersistence.CloseCurrentActivity(state, activityLogStore, now);
         state.State = TrackingState.Paused;
     }
 }

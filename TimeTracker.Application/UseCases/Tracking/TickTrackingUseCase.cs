@@ -6,7 +6,7 @@ namespace TimeTracker.Application.UseCases.Tracking;
 public class TickTrackingUseCase
 {
     // Executes one timer tick: accumulate elapsed time, switch app bucket if needed, then build snapshot.
-    public TrackingSnapshot Execute(TrackingSessionState state, IActiveAppReader activeAppReader, IActivityLogStore activityLogStore, DateTime now)
+    public TrackingSnapshot Execute(TrackingSessionState state, IActiveAppReader activeAppReader, DateTime now)
     {
         if (state.State != TrackingState.Running)
         {
@@ -14,12 +14,12 @@ public class TickTrackingUseCase
         }
 
         SessionTimeAccumulator.ApplyElapsedTime(state, now);
-        TrackForegroundAppTransition(state, activeAppReader, activityLogStore, now);
+        TrackForegroundAppTransition(state, activeAppReader);
 
         return BuildSnapshot(state);
     }
 
-    private static void TrackForegroundAppTransition(TrackingSessionState state, IActiveAppReader activeAppReader, IActivityLogStore activityLogStore, DateTime now)
+    private static void TrackForegroundAppTransition(TrackingSessionState state, IActiveAppReader activeAppReader)
     {
         string activeAppName = activeAppReader.GetActiveAppName();
         string nextTrackedAppName = TrackingRules.ResolveTrackedAppName(activeAppName);
@@ -27,29 +27,8 @@ public class TickTrackingUseCase
         bool appChanged = !state.LastTrackedAppName.Equals(nextTrackedAppName, StringComparison.OrdinalIgnoreCase);
         if (appChanged)
         {
-            SwitchTrackedApp(state, activityLogStore, now, nextTrackedAppName);
-            return;
+            state.LastTrackedAppName = nextTrackedAppName;
         }
-
-        // Re-open persistence row when current app is persistable but no open row exists.
-        if (state.CurrentActivity == null && TrackingRules.CanPersistActivity(state.LastTrackedAppName))
-        {
-            TrackingPersistence.StartNewActivity(state, activityLogStore, state.LastTrackedAppName, now);
-        }
-    }
-
-    private static void SwitchTrackedApp(TrackingSessionState state, IActivityLogStore activityLogStore, DateTime now, string nextTrackedAppName)
-    {
-        TrackingPersistence.CloseCurrentActivity(state, activityLogStore, now);
-        state.LastTrackedAppName = nextTrackedAppName;
-
-        if (TrackingRules.CanPersistActivity(nextTrackedAppName))
-        {
-            TrackingPersistence.StartNewActivity(state, activityLogStore, nextTrackedAppName, now);
-            return;
-        }
-
-        state.CurrentActivity = null;
     }
 
     private static TrackingSnapshot BuildSnapshot(TrackingSessionState state)
@@ -62,6 +41,7 @@ public class TickTrackingUseCase
 
         IReadOnlyList<AppUsage> topApps = state.SessionAppDurations
             .Where(pair => !pair.Key.Equals(TrackingRules.UnassignedAppName, StringComparison.OrdinalIgnoreCase))
+            .Where(pair => !pair.Key.Equals(TrackingRules.IdleAppName, StringComparison.OrdinalIgnoreCase))
             .OrderByDescending(pair => pair.Value)
             .ThenBy(pair => pair.Key, StringComparer.OrdinalIgnoreCase)
             .Take(3)
@@ -76,6 +56,7 @@ public class TickTrackingUseCase
         {
             CurrentAppName = TrackingRules.GetDisplayAppName(state),
             TotalRecorded = state.RecordedDuration,
+            IdleDuration = state.IdleDuration,
             FocusScore = score,
             FocusSummary = TrackingRules.GetFocusSummary(score),
             SuggestionMessage = TrackingRules.GetSuggestionMessage(state.RecordedDuration, score),

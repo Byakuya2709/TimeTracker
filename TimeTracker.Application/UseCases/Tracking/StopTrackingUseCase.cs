@@ -1,21 +1,60 @@
 using TimeTracker.Application.Abstractions;
 using TimeTracker.Application.Models;
+using TimeTracker.Domain.Entities;
 
 namespace TimeTracker.Application.UseCases.Tracking;
 
 public class StopTrackingUseCase
 {
-    // Stops tracking and closes the current persisted activity if needed.
+    // Stops tracking and persists one summarized session record.
     public void Execute(TrackingSessionState state, IActivityLogStore activityLogStore, DateTime now)
     {
         if (state.State == TrackingState.Running)
         {
             SessionTimeAccumulator.ApplyElapsedTime(state, now);
-            TrackingPersistence.CloseCurrentActivity(state, activityLogStore, now);
         }
 
         state.LastTickAt = null;
-        state.CurrentActivity = null;
         state.State = TrackingState.Stopped;
+
+        PersistSessionIfAny(state, activityLogStore, now);
+        state.SessionStartedAt = null;
+    }
+
+    private static void PersistSessionIfAny(TrackingSessionState state, IActivityLogStore activityLogStore, DateTime endedAt)
+    {
+        if (!state.SessionStartedAt.HasValue)
+        {
+            return;
+        }
+
+        DateTime startedAt = state.SessionStartedAt.Value;
+        if (endedAt <= startedAt)
+        {
+            return;
+        }
+
+        List<TrackingSessionAppUsage> appUsages = state.SessionAppDurations
+            .Where(pair => pair.Value > TimeSpan.Zero)
+            .Select(pair => new TrackingSessionAppUsage
+            {
+                AppName = pair.Key,
+                Duration = pair.Value
+            })
+            .OrderByDescending(usage => usage.Duration)
+            .ThenBy(usage => usage.AppName, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        TrackingSession session = new()
+        {
+            SessionDate = DateOnly.FromDateTime(startedAt),
+            StartedAt = startedAt,
+            EndedAt = endedAt,
+            TotalDuration = state.RecordedDuration,
+            IdleDuration = state.IdleDuration,
+            AppUsages = appUsages
+        };
+
+        activityLogStore.AddTrackingSession(session);
     }
 }

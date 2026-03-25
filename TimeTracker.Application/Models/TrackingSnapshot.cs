@@ -20,6 +20,8 @@ public class TrackingSnapshot
 
     public TimeSpan TotalRecorded { get; init; }
 
+    public TimeSpan IdleDuration { get; init; }
+
     public int FocusScore { get; init; }
 
     public string FocusSummary { get; init; } = "Settling In";

@@ -70,7 +70,6 @@
         Grid.Column="1"
         Width="260"
         Height="Auto"
-        MinHeight="340"
         HorizontalAlignment="Left"
         VerticalAlignment="Bottom"
         CornerRadius="20"
@@ -112,7 +111,7 @@
                            Foreground="#3E4942"
                            HorizontalAlignment="Center"
                           Text="TOTAL RECORDING" />
-                </StackPanel>
+                </StackPanel> 
 
                 <Border Grid.Row="2"
                     Margin="0,14,0,0"

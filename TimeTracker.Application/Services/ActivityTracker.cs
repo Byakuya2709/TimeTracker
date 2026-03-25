@@ -23,17 +23,17 @@ public class ActivityTracker
 
     public TrackingSnapshot Tick()
     {
-        return _tickTrackingUseCase.Execute(_sessionState, _activeAppReader, _activityLogStore, DateTime.Now);
+        return _tickTrackingUseCase.Execute(_sessionState, _activeAppReader, DateTime.Now);
     }
 
     public void Start()
     {
-        _startTrackingUseCase.Execute(_sessionState, _activeAppReader, _activityLogStore, DateTime.Now);
+        _startTrackingUseCase.Execute(_sessionState, _activeAppReader, DateTime.Now);
     }
 
     public void Pause()
     {
-        _pauseTrackingUseCase.Execute(_sessionState, _activityLogStore, DateTime.Now);
+        _pauseTrackingUseCase.Execute(_sessionState, DateTime.Now);
     }
 
 

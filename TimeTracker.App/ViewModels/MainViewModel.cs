@@ -12,6 +12,7 @@ public class MainViewModel : ViewModelBase, IDisposable
 
     private string _currentAppName = "Starting...";
     private string _elapsedTime = "00:00:00";
+    private string _idleTime = "00:00:00";
     private string _suggestionMessage = string.Empty;
     private string _topAppsSummary = "1. -- 00:00\n2. -- 00:00\n3. -- 00:00";
     private int _focusScore;
@@ -62,6 +63,12 @@ public class MainViewModel : ViewModelBase, IDisposable
     {
         get => _elapsedTime;
         private set => SetProperty(ref _elapsedTime, value);
+    }
+
+    public string IdleTime
+    {
+        get => _idleTime;
+        private set => SetProperty(ref _idleTime, value);
     }
 
     public int FocusScore
@@ -144,6 +151,7 @@ public class MainViewModel : ViewModelBase, IDisposable
         UpdateActionState(snapshot.State);
         CurrentAppName = snapshot.CurrentAppName;
         ElapsedTime = snapshot.TotalRecorded.ToString(@"hh\:mm\:ss");
+        IdleTime = snapshot.IdleDuration.ToString(@"hh\:mm\:ss");
         FocusScore = snapshot.FocusScore;
         FocusSummary = snapshot.FocusSummary;
         Notification = snapshot.SuggestionMessage;
