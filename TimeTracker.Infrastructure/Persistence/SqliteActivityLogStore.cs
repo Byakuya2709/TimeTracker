@@ -6,20 +6,16 @@ namespace TimeTracker.Infrastructure.Persistence;
 
 public class SqliteActivityLogStore : IActivityLogStore
 {
-    private readonly DbContextOptions<TimeTrackerDbContext> _dbContextOptions;
+    private readonly IDbContextFactory<TimeTrackerDbContext> _dbContextFactory;
 
-    public SqliteActivityLogStore(string databasePath)
+    public SqliteActivityLogStore(IDbContextFactory<TimeTrackerDbContext> dbContextFactory)
     {
-        DbContextOptionsBuilder<TimeTrackerDbContext> optionsBuilder = new();
-        optionsBuilder.UseSqlite($"Data Source={databasePath}");
-        _dbContextOptions = optionsBuilder.Options;
-        
-        EnsureDatabase();
+        _dbContextFactory = dbContextFactory;
     }
 
     public void AddTrackingSession(TrackingSession session)
     {
-        using TimeTrackerDbContext dbContext = new(_dbContextOptions);
+        using TimeTrackerDbContext dbContext = _dbContextFactory.CreateDbContext();
 
         foreach (TrackingSessionAppUsage appUsage in session.AppUsages.Where(item => item.Duration > TimeSpan.Zero))
         {
@@ -37,7 +33,7 @@ public class SqliteActivityLogStore : IActivityLogStore
 
     public IReadOnlyList<TrackingSession> GetTrackingSessions()
     {
-        using TimeTrackerDbContext dbContext = new(_dbContextOptions);
+        using TimeTrackerDbContext dbContext = _dbContextFactory.CreateDbContext();
 
         return dbContext
             .TrackingSessions
@@ -48,7 +44,7 @@ public class SqliteActivityLogStore : IActivityLogStore
 
     public IReadOnlyList<TrackingSession> GetTrackingSessionsByWeeks(DateOnly dateInWeek)
     {
-        using TimeTrackerDbContext dbContext = new(_dbContextOptions);
+        using TimeTrackerDbContext dbContext = _dbContextFactory.CreateDbContext();
 
         int mondayOffset = ((int)dateInWeek.DayOfWeek + 6) % 7;
         DateOnly weekStart = dateInWeek.AddDays(-mondayOffset);
@@ -64,7 +60,7 @@ public class SqliteActivityLogStore : IActivityLogStore
 
     public bool DeleteTrackingSession(Guid sessionId)
     {
-        using TimeTrackerDbContext dbContext = new(_dbContextOptions);
+        using TimeTrackerDbContext dbContext = _dbContextFactory.CreateDbContext();
 
         TrackingSession? session = dbContext.TrackingSessions.FirstOrDefault(item => item.Id == sessionId);
         if (session is null)
@@ -87,9 +83,4 @@ public class SqliteActivityLogStore : IActivityLogStore
         return true;
     }
 
-    private void EnsureDatabase()
-    {
-        using TimeTrackerDbContext dbContext = new(_dbContextOptions);
-        dbContext.Database.EnsureCreated();
-    }
 }

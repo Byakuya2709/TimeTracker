@@ -5,7 +5,7 @@ using TimeTracker.Application.Abstractions;
 
 namespace TimeTracker.Infrastructure.Services;
 
-public class Win32ActiveAppReader : IActiveAppReader
+public class Win32ActiveAppReader : IActiveAppReader, IIdleThresholdConfigurable
 {
     private const string UnknownAppName = "Unknown App";
     private const string IdleAppName = "Idle";
@@ -24,7 +24,7 @@ public class Win32ActiveAppReader : IActiveAppReader
     private string _lastKnownAppDisplayName = UnknownAppName;
     private IntPtr _lastForegroundWindow = IntPtr.Zero;
     private string _lastResolvedAppName = UnknownAppName;
-    private readonly uint _idleThresholdMilliseconds;
+    private uint _idleThresholdMilliseconds;
 
     private static readonly ConcurrentDictionary<int, string> ProcessDisplayNameCache = new();
 
@@ -35,20 +35,12 @@ public class Win32ActiveAppReader : IActiveAppReader
 
     public Win32ActiveAppReader(TimeSpan idleThreshold)
     {
-        double thresholdMilliseconds = idleThreshold.TotalMilliseconds;
-        if (double.IsNaN(thresholdMilliseconds)
-            || double.IsInfinity(thresholdMilliseconds)
-            || thresholdMilliseconds < 1000)
-        {
-            thresholdMilliseconds = TimeSpan.FromSeconds(DefaultIdleThresholdSeconds).TotalMilliseconds;
-        }
+        _idleThresholdMilliseconds = NormalizeThresholdMilliseconds(idleThreshold);
+    }
 
-        if (thresholdMilliseconds > uint.MaxValue)
-        {
-            thresholdMilliseconds = uint.MaxValue;
-        }
-
-        _idleThresholdMilliseconds = (uint)thresholdMilliseconds;
+    public void SetIdleThreshold(TimeSpan idleThreshold)
+    {
+        _idleThresholdMilliseconds = NormalizeThresholdMilliseconds(idleThreshold);
     }
 
     public string GetActiveAppName()
@@ -213,6 +205,24 @@ public class Win32ActiveAppReader : IActiveAppReader
         return string.IsNullOrWhiteSpace(process.ProcessName)
             ? UnknownAppName
             : process.ProcessName;
+    }
+
+    private static uint NormalizeThresholdMilliseconds(TimeSpan idleThreshold)
+    {
+        double thresholdMilliseconds = idleThreshold.TotalMilliseconds;
+        if (double.IsNaN(thresholdMilliseconds)
+            || double.IsInfinity(thresholdMilliseconds)
+            || thresholdMilliseconds < 1000)
+        {
+            thresholdMilliseconds = TimeSpan.FromSeconds(DefaultIdleThresholdSeconds).TotalMilliseconds;
+        }
+
+        if (thresholdMilliseconds > uint.MaxValue)
+        {
+            thresholdMilliseconds = uint.MaxValue;
+        }
+
+        return (uint)thresholdMilliseconds;
     }
 
     private static bool IsDesktopShellWindow(IntPtr windowHandle)

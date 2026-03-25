@@ -10,6 +10,7 @@ public partial class MainViewModel : ViewModelBase, IDisposable
 {
     private readonly ActivityTracker _activityTracker;
     private readonly IActivityLogStore _activityLogStore;
+    private readonly IUserSettingsService _userSettingsService;
     private readonly DispatcherTimer _timer;
     private readonly RelayCommand _startCommand;
     private readonly RelayCommand _pauseCommand;
@@ -35,10 +36,14 @@ public partial class MainViewModel : ViewModelBase, IDisposable
 
     public ICommand ShowSettingsCommand => _showSettingsCommand;
 
-    public MainViewModel(ActivityTracker activityTracker, IActivityLogStore activityLogStore)
+    public MainViewModel(
+        ActivityTracker activityTracker,
+        IActivityLogStore activityLogStore,
+        IUserSettingsService userSettingsService)
     {
         _activityTracker = activityTracker;
         _activityLogStore = activityLogStore;
+        _userSettingsService = userSettingsService;
         _timer = new DispatcherTimer
         {
             Interval = TimeSpan.FromSeconds(1)
@@ -55,6 +60,7 @@ public partial class MainViewModel : ViewModelBase, IDisposable
 
         InitializeSessionsPageCommands();
         InitializeSettingsPageCommands();
+        LoadUserSettings();
 
         LoadTrackingSessions();
         _timer.Start();

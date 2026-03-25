@@ -1,4 +1,5 @@
 using System.Windows.Input;
+using TimeTracker.Domain.Entities;
 
 namespace TimeTracker.App.ViewModels;
 
@@ -12,6 +13,7 @@ public partial class MainViewModel
     private int _idleDetectionMinutes = 10;
     private bool _autoStartOnBoot;
     private int _overlayOpacity = 85;
+    private bool _isApplyingSettings;
 
     private OverlayAnchor _overlayPosition = OverlayAnchor.TopRight;
 
@@ -28,10 +30,12 @@ public partial class MainViewModel
         get => _idleDetectionMinutes;
         private set
         {
-            if (SetProperty(ref _idleDetectionMinutes, value))
+            int normalized = NormalizeIdleDetectionMinutes(value);
+            if (SetProperty(ref _idleDetectionMinutes, normalized))
             {
                 OnPropertyChanged(nameof(IsIdleDetection5Selected));
                 OnPropertyChanged(nameof(IsIdleDetection10Selected));
+                PersistUserSettings();
             }
         }
     }
@@ -48,6 +52,7 @@ public partial class MainViewModel
             if (SetProperty(ref _autoStartOnBoot, value))
             {
                 OnPropertyChanged(nameof(AutoStartOnBootStateText));
+                PersistUserSettings();
             }
         }
     }
@@ -64,6 +69,7 @@ public partial class MainViewModel
             {
                 OnPropertyChanged(nameof(OverlayOpacityText));
                 OnPropertyChanged(nameof(OverlayOpacityRatio));
+                PersistUserSettings();
             }
         }
     }
@@ -88,6 +94,7 @@ public partial class MainViewModel
                 OnPropertyChanged(nameof(IsBottomLeftOverlay));
                 OnPropertyChanged(nameof(IsBottomCenterOverlay));
                 OnPropertyChanged(nameof(IsBottomRightOverlay));
+                PersistUserSettings();
             }
         }
     }
@@ -112,15 +119,92 @@ public partial class MainViewModel
 
     private partial void InitializeSettingsPageCommands()
     {
-        _setIdleDetection5Command = new RelayCommand(() => IdleDetectionMinutes = 5);
-        _setIdleDetection10Command = new RelayCommand(() => IdleDetectionMinutes = 10);
+        _setIdleDetection5Command = new RelayCommand(() => SetIdleDetectionMinutes(5));
+        _setIdleDetection10Command = new RelayCommand(() => SetIdleDetectionMinutes(10));
         _toggleAutoStartCommand = new RelayCommand(() => AutoStartOnBoot = !AutoStartOnBoot);
         _setOverlayPositionCommand = new RelayCommand<OverlayAnchor>(SetOverlayPosition);
+    }
+
+    private void SetIdleDetectionMinutes(int minutes)
+    {
+        int normalized = NormalizeIdleDetectionMinutes(minutes);
+        bool isUnchanged = IdleDetectionMinutes == normalized;
+
+        IdleDetectionMinutes = normalized;
+        ApplyIdleDetectionThreshold();
+
+        if (isUnchanged)
+        {
+            PersistUserSettings();
+        }
     }
 
     private void SetOverlayPosition(OverlayAnchor anchor)
     {
         OverlayPosition = anchor;
+    }
+
+    private void LoadUserSettings()
+    {
+        try
+        {
+            _isApplyingSettings = true;
+            UserSettings settings = _userSettingsService.GetUserSettings();
+
+            IdleDetectionMinutes = settings.IdleDetectionMinutes;
+            AutoStartOnBoot = settings.AutoStartOnBoot;
+            OverlayOpacity = settings.OverlayOpacity;
+            OverlayPosition = ParseOverlayAnchor(settings.OverlayPosition);
+            ApplyIdleDetectionThreshold();
+        }
+        catch
+        {
+            // Keep in-memory defaults when database is unavailable.
+        }
+        finally
+        {
+            _isApplyingSettings = false;
+        }
+    }
+
+    private void PersistUserSettings()
+    {
+        if (_isApplyingSettings)
+        {
+            return;
+        }
+
+        try
+        {
+            _userSettingsService.SaveUserSettings(new UserSettings
+            {
+                IdleDetectionMinutes = IdleDetectionMinutes,
+                AutoStartOnBoot = AutoStartOnBoot,
+                OverlayOpacity = OverlayOpacity,
+                OverlayPosition = OverlayPosition.ToString()
+            });
+        }
+        catch
+        {
+            // UI should stay responsive even if persistence fails temporarily.
+        }
+    }
+
+    private static int NormalizeIdleDetectionMinutes(int value)
+    {
+        return value <= 5 ? 5 : 10;
+    }
+
+    private void ApplyIdleDetectionThreshold()
+    {
+        _activityTracker.SetIdleThreshold(TimeSpan.FromMinutes(IdleDetectionMinutes));
+    }
+
+    private static OverlayAnchor ParseOverlayAnchor(string? value)
+    {
+        return Enum.TryParse(value, ignoreCase: true, out OverlayAnchor parsed)
+            ? parsed
+            : OverlayAnchor.TopRight;
     }
 }
 

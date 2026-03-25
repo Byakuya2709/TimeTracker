@@ -596,7 +596,7 @@
                                                     Command="{Binding SetIdleDetection5Command}"
                                                     Tag="{Binding IsIdleDetection5Selected}"
                                                     Style="{StaticResource PreferenceOptionButtonStyle}"
-                                                    Content="5 Minutes"/>
+                                                    Content="5 Minutes" Click="Button_Click"/>
                                             <Button Width="120"
                                                     Command="{Binding SetIdleDetection10Command}"
                                                     Tag="{Binding IsIdleDetection10Selected}"

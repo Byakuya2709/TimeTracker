@@ -21,6 +21,14 @@ public class ActivityTracker
         _activityLogStore = activityLogStore;
     }
 
+    public void SetIdleThreshold(TimeSpan idleThreshold)
+    {
+        if (_activeAppReader is IIdleThresholdConfigurable configurableReader)
+        {
+            configurableReader.SetIdleThreshold(idleThreshold);
+        }
+    }
+
     public TrackingSnapshot Tick()
     {
         return _tickTrackingUseCase.Execute(_sessionState, _activeAppReader, DateTime.Now);
