@@ -14,5 +14,9 @@ public class TrackingSession
 
     public TimeSpan IdleDuration { get; set; }
 
+    public float ProductivityScore { get; set; } = 0.0f;
+
+
+
     public List<TrackingSessionAppUsage> AppUsages { get; set; } = [];
 }

@@ -2,6 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:vm="clr-namespace:TimeTracker.App.ViewModels"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="TimeTracker Dashboard"
@@ -39,14 +41,41 @@
                                  IsChecked="{Binding IsOverviewPage, Mode=OneWay}"
                                  Command="{Binding ShowOverviewCommand}"
                                  Style="{StaticResource ControlButtonStyle}">
-                        <TextBlock FontSize="14" FontWeight="SemiBold" Foreground="#F3FAEF" Text="Overview"/>
+
+                        <TextBlock FontSize="14" FontWeight="SemiBold" Foreground="#F3FAEF" Text="Overview">
+                               <materialDesign:PackIcon Kind="ViewDashboard" Width="18" Height="18" Margin="0,0,8,-4"
+  Foreground="White"/>
+                        </TextBlock>
+
                     </RadioButton>
 
                     <RadioButton GroupName="SidebarTabs"
+                                 Margin="0,0,0,10"
                                  IsChecked="{Binding IsSessionsPage, Mode=OneWay}"
                                  Command="{Binding ShowSessionsCommand}"
                                  Style="{StaticResource ControlButtonStyle}">
-                        <TextBlock FontSize="14" FontWeight="SemiBold" Foreground="#F3FAEF" Text="Tracking Sessions"/>
+
+                      
+                            <TextBlock FontSize="14" FontWeight="SemiBold" Foreground="#F3FAEF" Text="History">
+                                      <materialDesign:PackIcon 
+                                      Kind="History" 
+                                          Width="18" Height="18" Margin="0,0,8,-4"
+                                    Foreground="White"/>
+                            </TextBlock>
+
+                    </RadioButton>
+
+                    <RadioButton GroupName="SidebarTabs"
+                                 IsChecked="{Binding IsSettingsPage, Mode=OneWay}"
+                                 Command="{Binding ShowSettingsCommand}"
+                                 Style="{StaticResource ControlButtonStyle}">
+                        <TextBlock FontSize="14" FontWeight="SemiBold" Foreground="#F3FAEF" Text="Setting">
+                             <materialDesign:PackIcon 
+                                 Kind="Settings" 
+                                 Width="18" Height="18" 
+                                 Margin="0,0,8,-4"
+                                Foreground="White"/>
+                        </TextBlock>
                     </RadioButton>
                 </StackPanel>
             </Grid>
@@ -64,7 +93,7 @@
                                FontSize="22"
                                FontWeight="SemiBold"
                                Foreground="#1E3324"
-                               Text="History"/>
+                               Text="{Binding PageTitle}"/>
 
                     <Grid Grid.Row="1" Margin="0,16,0,0">
                         <Grid.Resources>
@@ -157,6 +186,114 @@
                                 <Setter Property="FontSize" Value="11"/>
                                 <Setter Property="Foreground" Value="#6A7A67"/>
                                 <Setter Property="VerticalAlignment" Value="Center"/>
+                            </Style>
+
+                            <Style TargetType="Button" x:Key="PreferenceOptionButtonStyle">
+                                <Setter Property="Background" Value="#FFFFFF"/>
+                                <Setter Property="BorderBrush" Value="#CDD9CE"/>
+                                <Setter Property="BorderThickness" Value="1"/>
+                                <Setter Property="Foreground" Value="#2F4436"/>
+                                <Setter Property="Padding" Value="14,8"/>
+                                <Setter Property="Cursor" Value="Hand"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="OptionBorder"
+                                                    Background="{TemplateBinding Background}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    CornerRadius="8">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="Tag" Value="True">
+                                                    <Setter TargetName="OptionBorder" Property="Background" Value="#006947"/>
+                                                    <Setter TargetName="OptionBorder" Property="BorderBrush" Value="#006947"/>
+                                                    <Setter Property="Foreground" Value="#FFFFFF"/>
+                                                </Trigger>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="OptionBorder" Property="BorderBrush" Value="#9EB5A2"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+
+                            <Style TargetType="Button" x:Key="PreferenceToggleButtonStyle">
+                                <Setter Property="Background" Value="#E8EDE9"/>
+                                <Setter Property="BorderBrush" Value="#D1DDD4"/>
+                                <Setter Property="BorderThickness" Value="1"/>
+                                <Setter Property="Foreground" Value="#35503D"/>
+                                <Setter Property="Padding" Value="12,5"/>
+                                <Setter Property="Cursor" Value="Hand"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="ToggleBorder"
+                                                    Background="{TemplateBinding Background}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    CornerRadius="10">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="Tag" Value="True">
+                                                    <Setter TargetName="ToggleBorder" Property="Background" Value="#006947"/>
+                                                    <Setter TargetName="ToggleBorder" Property="BorderBrush" Value="#006947"/>
+                                                    <Setter Property="Foreground" Value="#FFFFFF"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+
+                            <Style TargetType="RadioButton" x:Key="OverlayAnchorButtonStyle">
+                                <Setter Property="Width" Value="72"/>
+                                <Setter Property="Height" Value="72"/>
+                                <Setter Property="Background" Value="#FFFFFF"/>
+                                <Setter Property="BorderBrush" Value="#D7E1D8"/>
+                                <Setter Property="BorderThickness" Value="1"/>
+                                <Setter Property="Cursor" Value="Hand"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                <Setter Property="Foreground" Value="White" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="RadioButton">
+                                            <Border x:Name="AnchorBorder"
+                                                    Background="{TemplateBinding Background}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    CornerRadius="10">
+
+                                                <ContentPresenter
+
+                                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>    
+
+                                            </Border>
+
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsChecked" Value="True">
+                                                    <Setter TargetName="AnchorBorder" Property="Background" Value="#006947"/>
+                                                    <Setter TargetName="AnchorBorder" Property="BorderBrush" Value="#006947"/>
+                                                    <Setter TargetName="AnchorBorder" Property="Effect">
+                                                        <Setter.Value>
+                                                            <DropShadowEffect ShadowDepth="0" BlurRadius="0" Color="#006947" Opacity="0.45"/>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Trigger>
+
+                                                <Trigger Property="IsChecked" Value="False">
+                                                    <Setter TargetName="AnchorBorder" Property="Effect" Value="{x:Null}"/>
+                                                    <Setter Property="Foreground" Value="#006947"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
                             </Style>
                         </Grid.Resources>
 
@@ -257,7 +394,8 @@
 
                                 <Border Grid.Column="0" Style="{StaticResource SessionShellStyle}" Padding="12">
                                     <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                        <ItemsControl ItemsSource="{Binding SessionDayGroups}">
+                                        <Grid>
+                                            <ItemsControl ItemsSource="{Binding SessionDayGroups}">
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Border Margin="0,0,0,12" Padding="10">
@@ -299,7 +437,7 @@
                                                                                     <Border HorizontalAlignment="Right" Background="#EAF2E7" CornerRadius="8" Padding="8,2">
                                                                                         <TextBlock FontSize="11" FontWeight="SemiBold" Foreground="#24422A" Text="{Binding TotalDuration}"/>
                                                                                     </Border>
-                                                                                    <TextBlock Margin="0,4,0,0" HorizontalAlignment="Right" FontSize="11" Foreground="#6A7A67" Text="{Binding IdleDuration, StringFormat=Idle: {0}}"/>
+                                                           
                                                                                 </StackPanel>
                                                                             </Grid>
                                                                         </Button>
@@ -311,6 +449,27 @@
                                                 </DataTemplate>
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
+
+                                            <TextBlock Text="Không có dữ liệu."
+                                                        FontSize="14"
+                                                       Foreground="#6A7A67"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center">                                  
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding SessionDayGroups.Count}" Value="0">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                          
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                            
+                                        </Grid>
+
                                     </ScrollViewer>
                                 </Border>
 
@@ -416,6 +575,112 @@
 
                             <Border Grid.Row="2" Margin="0,10,0,0" Background="#EEF4EA" BorderBrush="#D7E2D2" BorderThickness="1" CornerRadius="10" Padding="10,7">
                                 <TextBlock FontSize="12" Foreground="#3F5645" Text="{Binding SessionsStatusMessage}"/>
+                            </Border>
+                        </Grid>
+
+                        <Grid Visibility="{Binding IsSettingsPage, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Grid.Column="0" Style="{StaticResource CardStyle}" Background="#F3F3F3" Padding="24" BorderBrush="#E3E8DF">
+                                <StackPanel>
+                                    <TextBlock FontSize="14" FontWeight="Bold" Foreground="#3E4942" Text="TRACKING PREFERENCES"/>
+
+                                    <StackPanel Margin="0,24,0,0">
+                                        <TextBlock FontSize="14" FontWeight="Medium" Foreground="#1A1C1C" Text="Idle Detection"/>
+                                        <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                                            <Button Width="120" Margin="0,0,10,0"
+                                                    Command="{Binding SetIdleDetection5Command}"
+                                                    Tag="{Binding IsIdleDetection5Selected}"
+                                                    Style="{StaticResource PreferenceOptionButtonStyle}"
+                                                    Content="5 Minutes"/>
+                                            <Button Width="120"
+                                                    Command="{Binding SetIdleDetection10Command}"
+                                                    Tag="{Binding IsIdleDetection10Selected}"
+                                                    Style="{StaticResource PreferenceOptionButtonStyle}"
+                                                    Content="10 Minutes"/>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <DockPanel Margin="0,22,0,0" LastChildFill="False">
+                                        <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" FontSize="14" Foreground="#1A1C1C" Text="Auto-start on Boot"/>
+                                        <Button DockPanel.Dock="Right"
+                                                Width="64"
+                                                Tag="{Binding AutoStartOnBoot}"
+                                                Command="{Binding ToggleAutoStartCommand}"
+                                                Style="{StaticResource PreferenceToggleButtonStyle}"
+                                                Content="{Binding AutoStartOnBootStateText}"/>
+                                    </DockPanel>
+
+                                    <StackPanel Margin="0,24,0,0">
+                                        <DockPanel LastChildFill="False">
+                                            <TextBlock DockPanel.Dock="Left" FontSize="14" Foreground="#1A1C1C" Text="Overlay Opacity"/>
+                                            <TextBlock DockPanel.Dock="Right" FontSize="12" FontWeight="Bold" Foreground="#006947" Text="{Binding OverlayOpacityText}"/>
+                                        </DockPanel>
+                                        <Slider Margin="0,12,0,0"
+                                                Minimum="10"
+                                                Maximum="100"
+                                                TickFrequency="5"
+                                                IsSnapToTickEnabled="True"
+                                                Value="{Binding OverlayOpacity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="2" Style="{StaticResource CardStyle}" Background="#F3F3F3" Padding="24" BorderBrush="#E3E8DF">
+                                <StackPanel>
+                                    <TextBlock FontSize="14" FontWeight="Bold" Foreground="#3E4942" Text="OVERLAY POSITION"/>
+                                    <UniformGrid Margin="0,16,0,0" Columns="3" Rows="3">
+                                        <RadioButton GroupName="OverlayPositionGrid" Margin="0,0,6,6" Style="{StaticResource OverlayAnchorButtonStyle}" IsChecked="{Binding IsTopLeftOverlay, Mode=OneWay}" Command="{Binding SetOverlayPositionCommand}" CommandParameter="{x:Static vm:OverlayAnchor.TopLeft}">
+                                            <materialDesign:PackIcon Kind="ArrowTopLeft" Width="18" Height="18"/>
+                                        </RadioButton>
+                                        <RadioButton GroupName="OverlayPositionGrid" Margin="0,0,6,6" Style="{StaticResource OverlayAnchorButtonStyle}" IsChecked="{Binding IsTopCenterOverlay, Mode=OneWay}" Command="{Binding SetOverlayPositionCommand}" CommandParameter="{x:Static vm:OverlayAnchor.TopCenter}">
+
+                                        <materialDesign:PackIcon Kind="ArrowTop" Width="18" Height="18"/>
+                                        </RadioButton>
+
+
+                                        <RadioButton GroupName="OverlayPositionGrid" Margin="0,0,0,6" Style="{StaticResource OverlayAnchorButtonStyle}" IsChecked="{Binding IsTopRightOverlay, Mode=OneWay}" Command="{Binding SetOverlayPositionCommand}" CommandParameter="{x:Static vm:OverlayAnchor.TopRight}">
+                                        <materialDesign:PackIcon Kind="ArrowTopRight" Width="18" Height="18"/>
+                                        </RadioButton>
+                                        
+
+                                        <RadioButton GroupName="OverlayPositionGrid" Margin="0,0,6,6" Style="{StaticResource OverlayAnchorButtonStyle}" IsChecked="{Binding IsMiddleLeftOverlay, Mode=OneWay}" Command="{Binding SetOverlayPositionCommand}" CommandParameter="{x:Static vm:OverlayAnchor.MiddleLeft}">
+                                        <materialDesign:PackIcon Kind="ArrowLeft" Width="18" Height="18"/>
+                                        </RadioButton>
+
+
+                                        <RadioButton GroupName="OverlayPositionGrid" Margin="0,0,6,6" Style="{StaticResource OverlayAnchorButtonStyle}" IsChecked="{Binding IsCenterOverlay, Mode=OneWay}" Command="{Binding SetOverlayPositionCommand}" CommandParameter="{x:Static vm:OverlayAnchor.Center}">
+                                            <materialDesign:PackIcon Kind="Dot" Width="40" Height="40"/>
+                                        </RadioButton>
+                                        
+                                        <RadioButton GroupName="OverlayPositionGrid" Margin="0,0,0,6" Style="{StaticResource OverlayAnchorButtonStyle}" IsChecked="{Binding IsMiddleRightOverlay, Mode=OneWay}" Command="{Binding SetOverlayPositionCommand}" CommandParameter="{x:Static vm:OverlayAnchor.MiddleRight}">
+                                            <materialDesign:PackIcon Kind="ArrowRight" Width="18" Height="18"/>
+                                        </RadioButton>
+                                        
+                                        <RadioButton GroupName="OverlayPositionGrid" Margin="0,0,6,0" Style="{StaticResource OverlayAnchorButtonStyle}" IsChecked="{Binding IsBottomLeftOverlay, Mode=OneWay}" Command="{Binding SetOverlayPositionCommand}" CommandParameter="{x:Static vm:OverlayAnchor.BottomLeft}">
+                                            <materialDesign:PackIcon Kind="ArrowBottomLeft" Width="18" Height="18"/>
+                                        </RadioButton>
+
+                                        <RadioButton GroupName="OverlayPositionGrid" Margin="0,0,6,0" Style="{StaticResource OverlayAnchorButtonStyle}" IsChecked="{Binding IsBottomCenterOverlay, Mode=OneWay}" Command="{Binding SetOverlayPositionCommand}" CommandParameter="{x:Static vm:OverlayAnchor.BottomCenter}">
+                                            <materialDesign:PackIcon Kind="ArrowBottom" Width="18" Height="18"/>
+                                        </RadioButton>
+
+                                        <RadioButton GroupName="OverlayPositionGrid" Margin="0,0,0,0" Style="{StaticResource OverlayAnchorButtonStyle}" IsChecked="{Binding IsBottomRightOverlay, Mode=OneWay}" Command="{Binding SetOverlayPositionCommand}" CommandParameter="{x:Static vm:OverlayAnchor.BottomRight}">
+                                            <materialDesign:PackIcon Kind="ArrowBottomRight" Width="18" Height="18"/>
+                                        </RadioButton>
+                                    </UniformGrid>
+
+                                    <Border Margin="0,18,0,0" Background="#FFFFFF" BorderBrush="#DCE6D8" BorderThickness="1" CornerRadius="10" Padding="12">
+                                        <StackPanel>
+                                            <TextBlock FontSize="12" Foreground="#5F6F64" Text="Preview"/>
+                                            <TextBlock Margin="0,6,0,0" FontSize="13" FontWeight="SemiBold" Foreground="#1E3324" Text="Overlay opacity and position have been updated."/>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
                             </Border>
                         </Grid>
                     </Grid>

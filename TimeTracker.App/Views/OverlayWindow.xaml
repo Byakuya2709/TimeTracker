@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Title="Time Tracker Overlay"
         SizeToContent="WidthAndHeight"
@@ -11,6 +12,7 @@
         ResizeMode="NoResize"
         ShowInTaskbar="False"
         Topmost="True"
+        Opacity="{Binding OverlayOpacityRatio}"
         AllowsTransparency="True"
         Background="Transparent">
 
@@ -42,13 +44,11 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Path Grid.Column="0"
-                      Data="M8,0 A8,8 0 1,0 8,16 A8,8 0 1,0 8,0 Z M7.2,4 L8.8,4 L8.8,9 L7.2,9 L7.2,4 Z M7.2,10 L8.8,10 L8.8,11.6 L7.2,11.6 L7.2,10 Z"
-                      Fill="#1A1C1C"
-                      Width="16"
-                      Height="16"
-                      VerticalAlignment="Center"
-                      Margin="0,0,8,0"/>
+
+                <Grid VerticalAlignment="Center">
+                    <materialDesign:PackIcon Kind="Badge" Width="22" Height="22"/>
+                </Grid>
+
 
                 <TextBlock Grid.Column="1"
                            FontSize="12"

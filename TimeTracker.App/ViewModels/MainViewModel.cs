@@ -16,6 +16,7 @@ public partial class MainViewModel : ViewModelBase, IDisposable
     private readonly RelayCommand _stopCommand;
     private readonly RelayCommand _showOverviewCommand;
     private readonly RelayCommand _showSessionsCommand;
+    private readonly RelayCommand _showSettingsCommand;
 
     private DashboardPage _currentPage = DashboardPage.Overview;
     private bool _isRecording;
@@ -31,6 +32,8 @@ public partial class MainViewModel : ViewModelBase, IDisposable
     public ICommand ShowOverviewCommand => _showOverviewCommand;
 
     public ICommand ShowSessionsCommand => _showSessionsCommand;
+
+    public ICommand ShowSettingsCommand => _showSettingsCommand;
 
     public MainViewModel(ActivityTracker activityTracker, IActivityLogStore activityLogStore)
     {
@@ -48,8 +51,10 @@ public partial class MainViewModel : ViewModelBase, IDisposable
         _stopCommand = new RelayCommand(StopTracking, () => !_isStopped);
         _showOverviewCommand = new RelayCommand(() => SetCurrentPage(DashboardPage.Overview));
         _showSessionsCommand = new RelayCommand(() => SetCurrentPage(DashboardPage.Sessions));
+        _showSettingsCommand = new RelayCommand(() => SetCurrentPage(DashboardPage.Settings));
 
         InitializeSessionsPageCommands();
+        InitializeSettingsPageCommands();
 
         LoadTrackingSessions();
         _timer.Start();
@@ -64,6 +69,8 @@ public partial class MainViewModel : ViewModelBase, IDisposable
             {
                 OnPropertyChanged(nameof(IsOverviewPage));
                 OnPropertyChanged(nameof(IsSessionsPage));
+                OnPropertyChanged(nameof(IsSettingsPage));
+                OnPropertyChanged(nameof(PageTitle));
             }
         }
     }
@@ -71,6 +78,16 @@ public partial class MainViewModel : ViewModelBase, IDisposable
     public bool IsOverviewPage => CurrentPage == DashboardPage.Overview;
 
     public bool IsSessionsPage => CurrentPage == DashboardPage.Sessions;
+
+    public bool IsSettingsPage => CurrentPage == DashboardPage.Settings;
+
+    public string PageTitle => CurrentPage switch
+    {
+        DashboardPage.Overview => "Tổng quan",
+        DashboardPage.Sessions => "Lịch Sử",
+        DashboardPage.Settings => "Thiết Lập",
+        _ => "Dashboard"
+    };
 
     public bool IsRecording
     {
@@ -138,6 +155,8 @@ public partial class MainViewModel : ViewModelBase, IDisposable
     }
 
     private partial void InitializeSessionsPageCommands();
+
+    private partial void InitializeSettingsPageCommands();
 
     private partial void LoadTrackingSessions(string? customStatusMessage = null);
 

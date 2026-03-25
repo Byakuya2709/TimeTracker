@@ -46,6 +46,10 @@ public class TimeTrackerDbContext : DbContext
                 .IsRequired();
 
             entity
+                .Property(item => item.ProductivityScore)
+                .HasColumnName("ProductivityScore")
+                .IsRequired();
+            entity
                 .HasMany(item => item.AppUsages)
                 .WithOne(item => item.Session)
                 .HasForeignKey(item => item.SessionId)

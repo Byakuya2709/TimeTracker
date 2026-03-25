@@ -10,8 +10,8 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resourses/Colors.xaml"/>
                 <ResourceDictionary Source="Resourses/Fonts.xaml"/>
-                <ResourceDictionary Source="Components/RadioButton.xaml"/>
-                <ResourceDictionary Source="Components/IconPathStyle.xaml"/>
+                <ResourceDictionary Source="Styles/IconPathStyle.xaml"/>
+                <ResourceDictionary Source="Styles/RadioButton.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Converter -->

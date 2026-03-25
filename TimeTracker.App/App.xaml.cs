@@ -20,10 +20,10 @@ public partial class App : System.Windows.Application
 		base.OnStartup(e);
 
 		string databasePath = Path.Combine(AppContext.BaseDirectory, "timetracker.db");
-		TimeSpan idleThreshold = ResolveIdleThreshold();
 		SqliteActivityLogStore activityLogStore = new(databasePath);
+        TimeSpan idleThreshold = ResolveIdleThreshold();
 
-		ActivityTracker tracker = new(
+        ActivityTracker tracker = new(
 			new Win32ActiveAppReader(idleThreshold),
 			activityLogStore);
 
