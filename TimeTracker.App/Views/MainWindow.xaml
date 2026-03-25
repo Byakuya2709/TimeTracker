@@ -4,239 +4,423 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Time Tracker Overlay"
-   SizeToContent="WidthAndHeight"
-        WindowStartupLocation="Manual"
-        WindowStyle="None"
-        ResizeMode="NoResize"
-        ShowInTaskbar="False"
-        Topmost="True"
-        AllowsTransparency="True"
-        Background="Transparent">
+        Title="TimeTracker Dashboard"
+        Width="1240"
+        Height="760"
+        MinWidth="980"
+        MinHeight="620"
+        WindowStartupLocation="CenterScreen"
+        Background="#E7EDE1">
+
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="252"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Row="1"
-        Grid.Column="1"
-        CornerRadius="20"
-        BorderBrush="#44FFFFFF"
-        BorderThickness="1"
-        Background="#CCF5F7F6"
-        VerticalAlignment="Top"
-        Width="260"
-        Margin="0,8,0,0"
-        Visibility="{Binding HasNotification,
-                     Converter={StaticResource BooleanToVisibilityConverter}}">
-
-            <Grid Margin="16,0,8,0">
-                <!-- thay StackPanel bằng Grid -->
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <!-- icon -->
-                    <ColumnDefinition Width="*"/>
-                    <!-- text -->
-                </Grid.ColumnDefinitions>
-
-                <Path Grid.Column="0"
-              Data="M8,0 A8,8 0 1,0 8,16 A8,8 0 1,0 8,0 Z 
-                    M7.2,4 L8.8,4 L8.8,9 L7.2,9 L7.2,4 Z 
-                    M7.2,10 L8.8,10 L8.8,11.6 L7.2,11.6 L7.2,10 Z"
-              Fill="#1A1C1C"
-              Width="16" Height="16"
-              VerticalAlignment="Center"
-              Margin="0,0,8,0"/>
-
-                <TextBlock Grid.Column="1"
-                   FontSize="12"
-                   FontWeight="SemiBold"
-                   Foreground="#1A1C1C"
-                   VerticalAlignment="Center"
-                   TextWrapping="Wrap"
-                           Padding="0,10"
-                   Text="{Binding Notification}" />
-            </Grid>
-        </Border>
-
-        <Border Grid.Row="0"
-        Grid.Column="1"
-        Width="260"
-        Height="Auto"
-        HorizontalAlignment="Left"
-        VerticalAlignment="Bottom"
-        CornerRadius="20"
-        BorderBrush="#44FFFFFF"
-        BorderThickness="1"
-        Background="#CCF5F7F6"
-        MouseLeftButtonDown="OverlayBorder_MouseLeftButtonDown">
-
-            <Grid Margin="12">
+        <Border Grid.Column="0" Background="#1F3724">
+            <Grid Margin="18,24,18,18">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <Border Grid.Row="0"
-                    Padding="10,8"
-                    CornerRadius="12"
-                    Background="#55FFFFFF"
-                    BorderBrush="#22000000"
-                    BorderThickness="0,0,0,1">
-                    <TextBlock FontSize="14"
-                           FontWeight="SemiBold"
-                           Foreground="#1A1C1C"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Center"
-                           Text="{Binding CurrentAppName}" />
-                </Border>
+                <StackPanel Grid.Row="0">
+                    <TextBlock FontSize="28" FontWeight="Bold" Foreground="#F3FAEF" Text="TimeTracker"/>
+                    <TextBlock Margin="0,4,0,0" FontSize="12" Foreground="#C9DFC6" Text="Personal focus dashboard"/>
+                </StackPanel>
 
-                <StackPanel Grid.Row="1" Margin="0,14,0,0" HorizontalAlignment="Center">
-                    <TextBlock FontSize="34"
-                           FontWeight="SemiBold"
-                           Foreground="#1A1C1C"
-                           Text="{Binding ElapsedTime}" />
-                    <TextBlock FontSize="10"
-                           FontWeight="SemiBold"
-                           Foreground="#3E4942"
-                           HorizontalAlignment="Center"
-                          Text="TOTAL RECORDING" />
-                </StackPanel> 
+                <StackPanel Grid.Row="1" Margin="0,30,0,0">
+                    <RadioButton GroupName="SidebarTabs"
+                                 Margin="0,0,0,10"
+                                 IsChecked="{Binding IsOverviewPage, Mode=OneWay}"
+                                 Command="{Binding ShowOverviewCommand}"
+                                 Style="{StaticResource ControlButtonStyle}">
+                        <TextBlock FontSize="14" FontWeight="SemiBold" Foreground="#F3FAEF" Text="Overview"/>
+                    </RadioButton>
 
-                <Border Grid.Row="2"
-                    Margin="0,14,0,0"
-                    Padding="12"
-                    CornerRadius="14"
-                    Background="#66FFFFFF"
-                    BorderBrush="#33FFFFFF"
-                    BorderThickness="1">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <Border Width="52"
-                            Height="52"
-                            CornerRadius="26"
-                            BorderBrush="#006947"
-                            BorderThickness="2"
-                            Background="#22FFFFFF">
-                            <TextBlock HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   FontSize="11"
-                                   FontWeight="Bold"
-                                   Foreground="#006947"
-                                   Text="{Binding FocusScoreText}" />
-                        </Border>
-
-                        <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
-                            <TextBlock FontSize="10"
-                                   FontWeight="Medium"
-                                   Foreground="#3E4942"
-                                   Text="FOCUS SCORE" />
-                            <TextBlock FontSize="13"
-                                   FontWeight="SemiBold"
-                                   Foreground="#1A1C1C"
-                                   Text="{Binding FocusSummary}" />
-                        </StackPanel>
-
-
-
-
-                    </Grid>
-                </Border>
-                <Border Grid.Row="3"
-                    Margin="0,12,0,0"
-                    Padding="10,8"
-                    CornerRadius="12"
-                    Background="#4DFFFFFF"
-                    BorderBrush="#22000000"
-                    BorderThickness="1">
-                    <StackPanel>
-                        <TextBlock FontSize="10"
-                               FontWeight="SemiBold"
-                               Foreground="#3E4942"
-                               Text="TOP 3 APPS" />
-                        <TextBlock Margin="0,6,0,0"
-                               FontSize="12"
-                               Foreground="#1A1C1C"
-                               Text="{Binding TopAppsSummary}"
-                               TextWrapping="Wrap" />
-                    </StackPanel>
-                </Border>
-
-                <Border 
-    BorderBrush="#33000000"
-    BorderThickness="0,0.3,0,0"
-                 Grid.Row="4"
-                   Margin="0,12,0,0">
-                    <Grid Margin="0,8,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-
-                        
-                        <!-- START -->
-                        <RadioButton Grid.Column="0"
-             GroupName="PlayerControls"
-             IsChecked="{Binding IsRecording, Mode=OneWay}"
-             Command="{Binding StartCommand}"
-             Style="{StaticResource ControlButtonStyle}">
-
-                            <Viewbox Width="14" Height="14">
-                                <Path Style="{StaticResource IconPathStyle}"
-Data="M2,0 L12,7 L2,14 Z"/>
-                            </Viewbox>
-
-                        </RadioButton>
-
-                        <!-- PAUSE -->
-
-                        <RadioButton Grid.Column="1"
-             GroupName="PlayerControls"
-             IsChecked="{Binding IsPaused, Mode=OneWay}"
-             Command="{Binding PauseCommand}"
-             Style="{StaticResource ControlButtonStyle}">
-
-                            <Viewbox Width="14" Height="14">
-                                <Path Style="{StaticResource IconPathStyle}"
-Data="M1,0 L5,0 L5,14 L1,14 Z M9,0 L13,0 L13,14 L9,14 Z"/>
-                            </Viewbox>
-
-                        </RadioButton>
-
-                        <!-- STOP -->
-                        <RadioButton Grid.Column="2"
-             GroupName="PlayerControls"
-             IsChecked="{Binding IsStopped, Mode=OneWay}"
-             Command="{Binding StopCommand}"
-             Style="{StaticResource ControlButtonStyle}">
-
-                            <Viewbox Width="14" Height="14">
-                                <Path Style="{StaticResource IconPathStyle}"
-          Data="M2,2 L12,2 L12,12 L2,12 Z"/>
-                            </Viewbox>
-
-                        </RadioButton>
-
-
-                    </Grid>
-                </Border>
+                    <RadioButton GroupName="SidebarTabs"
+                                 IsChecked="{Binding IsSessionsPage, Mode=OneWay}"
+                                 Command="{Binding ShowSessionsCommand}"
+                                 Style="{StaticResource ControlButtonStyle}">
+                        <TextBlock FontSize="14" FontWeight="SemiBold" Foreground="#F3FAEF" Text="Tracking Sessions"/>
+                    </RadioButton>
+                </StackPanel>
             </Grid>
         </Border>
 
+        <Grid Grid.Column="1" Margin="22">
+            <Border CornerRadius="16" Background="Transparent">
+                <Grid Margin="20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               FontSize="22"
+                               FontWeight="SemiBold"
+                               Foreground="#1E3324"
+                               Text="History"/>
+
+                    <Grid Grid.Row="1" Margin="0,16,0,0">
+                        <Grid.Resources>
+                            <Style TargetType="Border" x:Key="CardStyle">
+                                <Setter Property="Background" Value="#FFFFFF"/>
+                                <Setter Property="BorderBrush" Value="#DCE4D5"/>
+                                <Setter Property="BorderThickness" Value="1"/>
+                                <Setter Property="CornerRadius" Value="12"/>
+                                <Setter Property="Padding" Value="16"/>
+                            </Style>
+
+                            <Style TargetType="Border" x:Key="SessionShellStyle" BasedOn="{StaticResource CardStyle}">
+                                <Setter Property="Background" Value="#FCFEFB"/>
+                                <Setter Property="BorderBrush" Value="#CFDACB"/>
+                                <Setter Property="CornerRadius" Value="14"/>
+                            </Style>
+
+                            <Style TargetType="Button" x:Key="SessionActionButtonStyle">
+                                <Setter Property="Foreground" Value="#1D3022"/>
+                                <Setter Property="Background" Value="#EDF3EA"/>
+                                <Setter Property="BorderBrush" Value="#CFDACB"/>
+                                <Setter Property="BorderThickness" Value="1"/>
+                                <Setter Property="Padding" Value="14,8"/>
+                                <Setter Property="Cursor" Value="Hand"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="ButtonBorder"
+                                                    Background="{TemplateBinding Background}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    CornerRadius="10">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="ButtonBorder" Property="Background" Value="#E3EDE0"/>
+                                                    <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="#B8CAB3"/>
+                                                </Trigger>
+                                                <Trigger Property="IsPressed" Value="True">
+                                                    <Setter TargetName="ButtonBorder" Property="Background" Value="#D8E4D4"/>
+                                                </Trigger>
+                                                <Trigger Property="IsEnabled" Value="False">
+                                                    <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.55"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+
+                            <Style TargetType="Button" x:Key="SessionItemButtonStyle">
+                                <Setter Property="Padding" Value="12,10"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Background" Value="White"/>
+                                <Setter Property="BorderBrush" Value="#D4E0D1"/>
+                                <Setter Property="BorderThickness" Value="1"/>
+                                <Setter Property="Cursor" Value="Hand"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="ItemBorder"
+                                                    Background="{TemplateBinding Background}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    CornerRadius="10"
+                                                    Padding="{TemplateBinding Padding}">
+                                                <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="Tag" Value="True">
+                                                    <Setter TargetName="ItemBorder" Property="Background" Value="#E2F1DE"/>
+                                                    <Setter TargetName="ItemBorder" Property="BorderBrush" Value="#7EA88A"/>
+                                                    <Setter TargetName="ItemBorder" Property="BorderThickness" Value="1.5"/>
+                                                </Trigger>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="ItemBorder" Property="Background" Value="#F2F8EF"/>
+                                                    <Setter TargetName="ItemBorder" Property="BorderBrush" Value="#BFD2BA"/>
+                                                </Trigger>
+                                                <Trigger Property="IsPressed" Value="True">
+                                                    <Setter TargetName="ItemBorder" Property="Background" Value="#E5EFE2"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+
+                            <Style TargetType="TextBlock" x:Key="SessionMetaTextStyle">
+                                <Setter Property="FontSize" Value="11"/>
+                                <Setter Property="Foreground" Value="#6A7A67"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                            </Style>
+                        </Grid.Resources>
+
+                        <Grid Visibility="{Binding IsOverviewPage, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <UniformGrid Grid.Row="0" Columns="3" Margin="0,0,0,14">
+                                <Border Style="{StaticResource CardStyle}" Margin="0,0,10,0">
+                                    <StackPanel>
+                                        <TextBlock FontSize="11" Foreground="#5A6B57" Text="Current app"/>
+                                        <TextBlock Margin="0,6,0,0" FontSize="16" FontWeight="SemiBold" Foreground="#1D3022" Text="{Binding CurrentAppName}"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource CardStyle}" Margin="0,0,10,0">
+                                    <StackPanel>
+                                        <TextBlock FontSize="11" Foreground="#5A6B57" Text="Total recording"/>
+                                        <TextBlock Margin="0,6,0,0" FontSize="26" FontWeight="Bold" Foreground="#1D3022" Text="{Binding ElapsedTime}"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource CardStyle}">
+                                    <StackPanel>
+                                        <TextBlock FontSize="11" Foreground="#5A6B57" Text="Focus score"/>
+                                        <TextBlock Margin="0,6,0,0" FontSize="24" FontWeight="Bold" Foreground="#245F35" Text="{Binding FocusScoreText}"/>
+                                        <TextBlock Margin="0,2,0,0" FontSize="12" Foreground="#2D4032" Text="{Binding FocusSummary}"/>
+                                    </StackPanel>
+                                </Border>
+                            </UniformGrid>
+
+                            <Border Grid.Row="1" Style="{StaticResource CardStyle}" Margin="0,0,0,14"
+                                    Visibility="{Binding HasNotification, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock FontSize="14" Margin="0,0,10,0" Foreground="#1E3324" Text="Alert:"/>
+                                    <TextBlock FontSize="14" Foreground="#1E3324" TextWrapping="Wrap" Text="{Binding Notification}"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Grid Grid.Row="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="300"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0" Style="{StaticResource CardStyle}" Margin="0,0,14,0">
+                                    <StackPanel>
+                                        <TextBlock FontSize="12" FontWeight="SemiBold" Foreground="#50634E" Text="Top 3 apps in current session"/>
+                                        <TextBlock Margin="0,8,0,0" FontSize="13" Foreground="#1D3022" Text="{Binding TopAppsSummary}"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Grid.Column="1" Style="{StaticResource CardStyle}">
+                                    <StackPanel>
+                                        <TextBlock FontSize="12" FontWeight="SemiBold" Foreground="#50634E" Text="Controls"/>
+                                        <UniformGrid Margin="0,14,0,0" Columns="3">
+                                            <Button Margin="0,0,8,0" Height="40" Command="{Binding StartCommand}" Background="#DBF1DF" BorderBrush="#BFDCC5" Foreground="#1C5030" Content="Start"/>
+                                            <Button Margin="0,0,8,0" Height="40" Command="{Binding PauseCommand}" Background="#F0EEE1" BorderBrush="#DED9C0" Foreground="#5A542A" Content="Pause"/>
+                                            <Button Height="40" Command="{Binding StopCommand}" Background="#F5E1E1" BorderBrush="#E3C7C7" Foreground="#6A2E2E" Content="Stop"/>
+                                        </UniformGrid>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </Grid>
+
+                        <Grid Visibility="{Binding IsSessionsPage, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,14" VerticalAlignment="Center">
+                                <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center">
+                                    <TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="Black" Foreground="#1E3324" Text="Tracking Sessions"/>
+                                    <StackPanel Margin="0,4,0,0" Orientation="Horizontal">
+                                        <Border Background="#E8F1E4" CornerRadius="10" Padding="2,3">
+                                            <TextBlock FontSize="11" FontWeight="SemiBold" Foreground="#2E5037" Text="Weekly timeline"/>
+                                        </Border>
+                                        <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" FontSize="12" Foreground="#4A5B48" Text="{Binding WeekRangeTitle}"/>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <DatePicker Width="156" Margin="0,0,8,0" SelectedDate="{Binding SelectedWeekDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <Button Width="100" Height="34" Margin="0,0,8,0" Style="{StaticResource SessionActionButtonStyle}" Command="{Binding RefreshSessionsCommand}" Content="Refresh"/>
+                                    <Button Width="146" Height="34" Style="{StaticResource SessionActionButtonStyle}" Background="#F3E8E8" BorderBrush="#D8C0C0" Foreground="#6A2E2E" Command="{Binding DeleteSelectedSessionCommand}" Content="Delete selected"/>
+                                </StackPanel>
+                            </DockPanel>
+
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="14"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0" Style="{StaticResource SessionShellStyle}" Padding="12">
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                        <ItemsControl ItemsSource="{Binding SessionDayGroups}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Margin="0,0,0,12" Padding="10">
+                                                        <StackPanel>
+                                                            <DockPanel LastChildFill="False">
+                                                                <TextBlock FontSize="16" FontWeight="SemiBold" Foreground="#24422A" Text="{Binding DateTitle}"/>
+                                                                <Border DockPanel.Dock="Right" Background="#E6EFE2" CornerRadius="8" Padding="8,2">
+                                                                    <TextBlock Style="{StaticResource SessionMetaTextStyle}" FontWeight="SemiBold" Text="{Binding Sessions.Count, StringFormat={}{0} sessions}"/>
+                                                                </Border>
+                                                            </DockPanel>
+
+                                                            <ItemsControl ItemsSource="{Binding Sessions}">
+                                                                <ItemsControl.ItemTemplate>
+                                                                    <DataTemplate>
+                                                                        <Button Margin="0,8,0,0"
+                                                                                Style="{StaticResource SessionItemButtonStyle}"
+                                                                                Tag="{Binding IsSelected}"
+                                                                                Command="{Binding DataContext.SelectTrackingSessionCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                                CommandParameter="{Binding}">
+                                                                            <Grid>
+                                                                                <Grid.ColumnDefinitions>
+                                                                                    <ColumnDefinition Width="4"/>
+                                                                                    <ColumnDefinition Width="8"/>
+                                                                                    <ColumnDefinition Width="*"/>
+                                                                                    <ColumnDefinition Width="Auto"/>
+                                                                                </Grid.ColumnDefinitions>
+
+                                                                                <Border Grid.Column="0"
+                                                                                        Background="#4E7F59"
+                                                                                        CornerRadius="2"
+                                                                                        Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                                                                                <StackPanel Grid.Column="2">
+                                                                                    <TextBlock FontSize="13" FontWeight="SemiBold" Foreground="#1D3022" Text="{Binding TimeRange}"/>
+                                                                                    <TextBlock Margin="0,2,0,0" FontSize="12" Foreground="#4B6148" Text="{Binding TopApps}" TextWrapping="Wrap"/>
+                                                                                </StackPanel>
+
+                                                                                <StackPanel Grid.Column="3" Margin="12,0,0,0" VerticalAlignment="Center">
+                                                                                    <Border HorizontalAlignment="Right" Background="#EAF2E7" CornerRadius="8" Padding="8,2">
+                                                                                        <TextBlock FontSize="11" FontWeight="SemiBold" Foreground="#24422A" Text="{Binding TotalDuration}"/>
+                                                                                    </Border>
+                                                                                    <TextBlock Margin="0,4,0,0" HorizontalAlignment="Right" FontSize="11" Foreground="#6A7A67" Text="{Binding IdleDuration, StringFormat=Idle: {0}}"/>
+                                                                                </StackPanel>
+                                                                            </Grid>
+                                                                        </Button>
+                                                                    </DataTemplate>
+                                                                </ItemsControl.ItemTemplate>
+                                                            </ItemsControl>
+                                                        </StackPanel>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                </Border>
+
+                                <Border Grid.Column="2" Style="{StaticResource SessionShellStyle}">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+
+                                 
+                                            <TextBlock FontSize="16" FontWeight="SemiBold" Foreground="#1E3324" Text="Session details"/>
+                                        
+
+                                        <TextBlock Grid.Row="1"
+                                                   Margin="0,12,0,0"
+                                                   FontSize="13"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="#1D3022"
+                                                   Text="{Binding SelectedTrackingSession.SessionDateTitle}"
+                                                   Visibility="{Binding HasSelectedTrackingSession, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                                        <TextBlock Grid.Row="2"
+                                                   Margin="0,4,0,0"
+                                                   FontSize="12"
+                                                   Foreground="#50634E"
+                                                   Text="{Binding SelectedTrackingSession.TimeRange}"
+                                                   Visibility="{Binding HasSelectedTrackingSession, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                                        <Grid Grid.Row="3" Margin="0,12,0,0" Visibility="{Binding HasSelectedTrackingSession, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+
+                                            <UniformGrid Grid.Row="0" Columns="2" Margin="0,0,0,12">
+                                                <Border Margin="0,0,8,0" Background="#F1F7EE" BorderBrush="#D8E5D4" BorderThickness="1" CornerRadius="10" Padding="10,8">
+                                                    <StackPanel>
+                                                        <TextBlock FontSize="11" Foreground="#60715E" Text="Total"/>
+                                                        <TextBlock Margin="0,2,0,0" FontSize="14" FontWeight="SemiBold" Foreground="#1D3022" Text="{Binding SelectedTrackingSession.TotalDuration}"/>
+                                                    </StackPanel>
+                                                </Border>
+                                                <Border Background="#F8F6EC" BorderBrush="#E6DDC8" BorderThickness="1" CornerRadius="10" Padding="10,8">
+
+                                                    <StackPanel>
+                                                        <TextBlock FontSize="11" Foreground="#6D6A54" Text="Idle"/>
+                                                        <TextBlock Margin="0,2,0,0" FontSize="14" FontWeight="SemiBold" Foreground="#3F3A20" Text="{Binding SelectedTrackingSession.IdleDuration}"/>
+                                                    </StackPanel> 
+                                                </Border>
+                                            </UniformGrid>
+
+                                            <TextBlock Grid.Row="1" FontSize="16" FontWeight="SemiBold" Foreground="#24422A" Text="App details"/>
+                                            <Border Grid.Row="2" Grid.RowSpan="2" Margin="0,8,0,0" Background="#F7FBF5" BorderBrush="#DCE6D8" BorderThickness="1" CornerRadius="10" Padding="10">
+                                                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                                    <ItemsControl ItemsSource="{Binding SelectedTrackingSession.AppUsageProgressItems}">
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <StackPanel Margin="0,0,0,10">
+                                                                    <DockPanel LastChildFill="False">
+                                                                        <TextBlock FontSize="12" FontWeight="SemiBold" Foreground="#24422A" Text="{Binding AppName}"/>
+                                                                        <TextBlock DockPanel.Dock="Right" FontSize="11" Foreground="#536651" Text="{Binding Duration}"/>
+                                                                    </DockPanel>
+                                                                    <Grid Margin="0,6,0,0">
+                                                                        <ProgressBar Height="8"
+                                                                                     Minimum="0"
+                                                                                     Maximum="100"
+                                                                                     Value="{Binding Percent}"
+                                                                                     Background="#E5EDE2"
+                                                                                     Foreground="#4F7E59">
+                                                                            <ProgressBar.Template>
+
+                                                                                <ControlTemplate TargetType="ProgressBar">
+                                                                                    <Border Background="#E5EDE2" CornerRadius="4" Height="8">
+                                                                                        <Border x:Name="PART_Track" Background="#4F7E59" CornerRadius="4"/>
+                                                                                    </Border>
+                                                                                </ControlTemplate>
+                                                                            </ProgressBar.Template>
+
+                                                                        </ProgressBar>
+                                                                    </Grid>
+                                                                </StackPanel>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </ScrollViewer>
+                                            </Border>
+                                        </Grid>
+
+                                        <TextBlock Grid.Row="3"
+                                                   VerticalAlignment="Center"
+                                                   HorizontalAlignment="Center"
+                                                   FontSize="12"
+                                                   Foreground="#60715E"
+                                                   Text="Chọn một session để xem chi tiết."
+                                                   Visibility="{Binding NoSelectedTrackingSession, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+
+                            <Border Grid.Row="2" Margin="0,10,0,0" Background="#EEF4EA" BorderBrush="#D7E2D2" BorderThickness="1" CornerRadius="10" Padding="10,7">
+                                <TextBlock FontSize="12" Foreground="#3F5645" Text="{Binding SessionsStatusMessage}"/>
+                            </Border>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </Window>
