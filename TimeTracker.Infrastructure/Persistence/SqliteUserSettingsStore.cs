@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using TimeTracker.Application.Abstractions;
+using TimeTracker.Domain.Interfaces;
 using TimeTracker.Domain.Entities;
 
 namespace TimeTracker.Infrastructure.Persistence;
 
-public class SqliteUserSettingsStore : IUserSettingsStore
+public class SqliteUserSettingsStore : IUserSettingsRepository
 {
     private const int SingletonSettingsId = 1;
 

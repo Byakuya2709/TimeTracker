@@ -6,6 +6,7 @@ using TimeTracker.App.ViewModels;
 using TimeTracker.Application.Abstractions;
 using TimeTracker.Application.Services;
 using TimeTracker.Domain.Entities;
+using TimeTracker.Domain.Interfaces;
 using TimeTracker.Infrastructure.Persistence;
 using TimeTracker.Infrastructure.Services;
 
@@ -26,8 +27,8 @@ public partial class App : System.Windows.Application
 		services.AddDbContextFactory<TimeTrackerDbContext>(options =>
 			options.UseSqlite($"Data Source={databasePath}"));
 			
-		services.AddSingleton<IActivityLogStore, SqliteActivityLogStore>();
-		services.AddSingleton<IUserSettingsStore, SqliteUserSettingsStore>();
+		services.AddSingleton<ITrackingSessionRepository, SqliteActivityLogStore>();
+		services.AddSingleton<IUserSettingsRepository, SqliteUserSettingsStore>();
 		services.AddSingleton<IUserSettingsService, UserSettingsService>();
 		services.AddSingleton(provider =>
 		{
@@ -36,7 +37,7 @@ public partial class App : System.Windows.Application
 
 			return new ActivityTracker(
 				new Win32ActiveAppReader(idleThreshold),
-				provider.GetRequiredService<IActivityLogStore>());
+				provider.GetRequiredService<ITrackingSessionRepository>());
 		});
 		services.AddSingleton<MainViewModel>();
 		services.AddSingleton(provider => new MainWindow(provider.GetRequiredService<MainViewModel>()));

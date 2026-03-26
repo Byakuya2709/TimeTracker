@@ -1,4 +1,4 @@
-using TimeTracker.Application.UseCases.Tracking;
+using TimeTracker.Application.Services.Tracking;
 
 namespace TimeTracker.Application.Models;
 

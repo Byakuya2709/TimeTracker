@@ -1,13 +1,14 @@
 using TimeTracker.Application.Abstractions;
 using TimeTracker.Application.Models;
 using TimeTracker.Domain.Entities;
+using TimeTracker.Domain.Interfaces;
 
-namespace TimeTracker.Application.UseCases.Tracking;
+namespace TimeTracker.Application.Services.Tracking;
 
 public class StopTrackingUseCase
 {
     // Stops tracking and persists one summarized session record.
-    public void Execute(TrackingSessionState state, IActivityLogStore activityLogStore, DateTime now)
+    public void Execute(TrackingSessionState state, ITrackingSessionRepository activityLogStore, DateTime now)
     {
         if (state.State == TrackingState.Running)
         {
@@ -21,7 +22,7 @@ public class StopTrackingUseCase
         state.SessionStartedAt = null;
     }
 
-    private static void PersistSessionIfAny(TrackingSessionState state, IActivityLogStore activityLogStore, DateTime endedAt)
+    private static void PersistSessionIfAny(TrackingSessionState state, ITrackingSessionRepository activityLogStore, DateTime endedAt)
     {
         if (!state.SessionStartedAt.HasValue)
         {

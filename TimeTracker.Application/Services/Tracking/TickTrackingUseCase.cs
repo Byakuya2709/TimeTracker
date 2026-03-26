@@ -1,7 +1,7 @@
 using TimeTracker.Application.Abstractions;
 using TimeTracker.Application.Models;
 
-namespace TimeTracker.Application.UseCases.Tracking;
+namespace TimeTracker.Application.Services.Tracking;
 
 public class TickTrackingUseCase
 {

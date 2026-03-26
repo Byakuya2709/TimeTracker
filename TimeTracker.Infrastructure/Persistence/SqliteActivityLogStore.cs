@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using TimeTracker.Application.Abstractions;
+using TimeTracker.Domain.Interfaces;
 using TimeTracker.Domain.Entities;
 
 namespace TimeTracker.Infrastructure.Persistence;
 
-public class SqliteActivityLogStore : IActivityLogStore
+public class SqliteActivityLogStore : ITrackingSessionRepository
 {
     private readonly IDbContextFactory<TimeTrackerDbContext> _dbContextFactory;
 

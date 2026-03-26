@@ -1,6 +1,6 @@
 using TimeTracker.Application.Models;
 
-namespace TimeTracker.Application.UseCases.Tracking;
+namespace TimeTracker.Application.Services.Tracking;
 
 public static class TrackingRules
 {

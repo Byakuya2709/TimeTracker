@@ -1,13 +1,14 @@
 using TimeTracker.Application.Abstractions;
 using TimeTracker.Application.Models;
-using TimeTracker.Application.UseCases.Tracking;
+using TimeTracker.Application.Services.Tracking;
+using TimeTracker.Domain.Interfaces;
 
 namespace TimeTracker.Application.Services;
 
 public class ActivityTracker
 {
     private readonly IActiveAppReader _activeAppReader;
-    private readonly IActivityLogStore _activityLogStore;
+    private readonly ITrackingSessionRepository _activityLogStore;
     private readonly TrackingSessionState _sessionState = new();
     private readonly StartTrackingUseCase _startTrackingUseCase = new();
     private readonly PauseTrackingUseCase _pauseTrackingUseCase = new();
@@ -15,7 +16,7 @@ public class ActivityTracker
     private readonly TickTrackingUseCase _tickTrackingUseCase = new();
     public TrackingState State => _sessionState.State;
 
-    public ActivityTracker(IActiveAppReader activeAppReader, IActivityLogStore activityLogStore)
+    public ActivityTracker(IActiveAppReader activeAppReader, ITrackingSessionRepository activityLogStore)
     {
         _activeAppReader = activeAppReader;
         _activityLogStore = activityLogStore;

@@ -1,8 +1,8 @@
 using TimeTracker.Domain.Entities;
 
-namespace TimeTracker.Application.Abstractions;
+namespace TimeTracker.Domain.Interfaces;
 
-public interface IActivityLogStore
+public interface ITrackingSessionRepository
 {
     void AddTrackingSession(TrackingSession session);
 

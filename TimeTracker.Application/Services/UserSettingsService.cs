@@ -1,13 +1,14 @@
 using TimeTracker.Application.Abstractions;
 using TimeTracker.Domain.Entities;
+using TimeTracker.Domain.Interfaces;
 
 namespace TimeTracker.Application.Services;
 
 public class UserSettingsService : IUserSettingsService
 {
-    private readonly IUserSettingsStore _userSettingsStore;
+    private readonly IUserSettingsRepository _userSettingsStore;
 
-    public UserSettingsService(IUserSettingsStore userSettingsStore)
+    public UserSettingsService(IUserSettingsRepository userSettingsStore)
     {
         _userSettingsStore = userSettingsStore;
     }
