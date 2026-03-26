@@ -1,5 +1,5 @@
 using System.Windows.Input;
-using TimeTracker.Domain.Entities;
+using TimeTracker.Application.Models;
 
 namespace TimeTracker.App.ViewModels;
 
@@ -149,7 +149,7 @@ public partial class MainViewModel
         try
         {
             _isApplyingSettings = true;
-            UserSettings settings = _userSettingsService.GetUserSettings();
+            UserSettingsModel settings = _userSettingsService.GetUserSettings();
 
             IdleDetectionMinutes = settings.IdleDetectionMinutes;
             AutoStartOnBoot = settings.AutoStartOnBoot;
@@ -176,7 +176,7 @@ public partial class MainViewModel
 
         try
         {
-            _userSettingsService.SaveUserSettings(new UserSettings
+            _userSettingsService.SaveUserSettings(new UserSettingsModel
             {
                 IdleDetectionMinutes = IdleDetectionMinutes,
                 AutoStartOnBoot = AutoStartOnBoot,

@@ -1,10 +1,12 @@
-using TimeTracker.Domain.Entities;
+using TimeTracker.Application.Models;
 
 namespace TimeTracker.Application.Abstractions;
 
 public interface IUserSettingsService
 {
-    UserSettings GetUserSettings();
+    UserSettingsModel GetUserSettings();
 
-    void SaveUserSettings(UserSettings settings);
+    void SaveUserSettings(UserSettingsModel settings);
+
+    TimeSpan ResolveIdleThreshold();
 }

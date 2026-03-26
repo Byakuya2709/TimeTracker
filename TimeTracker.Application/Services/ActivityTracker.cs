@@ -5,7 +5,7 @@ using TimeTracker.Domain.Interfaces;
 
 namespace TimeTracker.Application.Services;
 
-public class ActivityTracker
+public sealed class ActivityTracker : ITrackingRuntimeService
 {
     private readonly IActiveAppReader _activeAppReader;
     private readonly ITrackingSessionRepository _activityLogStore;

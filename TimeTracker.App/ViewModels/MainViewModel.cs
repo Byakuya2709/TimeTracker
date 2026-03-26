@@ -2,15 +2,13 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using TimeTracker.Application.Abstractions;
 using TimeTracker.Application.Models;
-using TimeTracker.Application.Services;
-using TimeTracker.Domain.Interfaces;
 
 namespace TimeTracker.App.ViewModels;
 
 public partial class MainViewModel : ViewModelBase, IDisposable
 {
-    private readonly ActivityTracker _activityTracker;
-    private readonly ITrackingSessionRepository _activityLogStore;
+    private readonly ITrackingRuntimeService _activityTracker;
+    private readonly ITrackingSessionService _trackingSessionService;
     private readonly IUserSettingsService _userSettingsService;
     private readonly DispatcherTimer _timer;
     private readonly RelayCommand _startCommand;
@@ -38,12 +36,12 @@ public partial class MainViewModel : ViewModelBase, IDisposable
     public ICommand ShowSettingsCommand => _showSettingsCommand;
 
     public MainViewModel(
-        ActivityTracker activityTracker,
-        ITrackingSessionRepository activityLogStore,
+        ITrackingRuntimeService activityTracker,
+        ITrackingSessionService trackingSessionService,
         IUserSettingsService userSettingsService)
     {
         _activityTracker = activityTracker;
-        _activityLogStore = activityLogStore;
+        _trackingSessionService = trackingSessionService;
         _userSettingsService = userSettingsService;
         _timer = new DispatcherTimer
         {

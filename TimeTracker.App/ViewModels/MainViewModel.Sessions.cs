@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows.Input;
-using TimeTracker.Domain.Entities;
+using TimeTracker.Application.Models;
 
 namespace TimeTracker.App.ViewModels;
 
@@ -91,12 +91,12 @@ public partial class MainViewModel
     private partial void LoadTrackingSessions(string? customStatusMessage)
     {
         DateOnly dateInWeek = DateOnly.FromDateTime((_selectedWeekDate ?? DateTime.Today).Date);
-        IReadOnlyList<TrackingSession> sessions = _activityLogStore.GetTrackingSessionsByWeeks(dateInWeek);
+        IReadOnlyList<TrackingSessionModel> sessions = _trackingSessionService.GetTrackingSessionsByWeek(dateInWeek);
 
         _weekSessions.Clear();
         SessionDayGroups.Clear();
 
-        foreach (TrackingSession session in sessions)
+        foreach (TrackingSessionModel session in sessions)
         {
             _weekSessions.Add(MapToListItem(session));
         }
@@ -139,7 +139,7 @@ public partial class MainViewModel
 
         try
         {
-            isDeleted = _activityLogStore.DeleteTrackingSession(sessionId);
+            isDeleted = _trackingSessionService.DeleteTrackingSession(sessionId);
         }
         catch
         {
@@ -173,15 +173,15 @@ public partial class MainViewModel
         }
     }
 
-    private static TrackingSessionListItem MapToListItem(TrackingSession session)
+    private static TrackingSessionListItem MapToListItem(TrackingSessionModel session)
     {
-        List<TrackingSessionAppUsage> topApps = session
+        List<TrackingSessionAppUsageModel> topApps = session
             .AppUsages
             .OrderByDescending(item => item.Duration)
             .Take(3)
             .ToList();
 
-        List<TrackingSessionAppUsage> allApps = session
+        List<TrackingSessionAppUsageModel> allApps = session
             .AppUsages
             .OrderByDescending(item => item.Duration)
             .ToList();
