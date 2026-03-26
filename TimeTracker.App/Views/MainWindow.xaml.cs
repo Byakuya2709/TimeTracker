@@ -14,9 +14,4 @@ public partial class MainWindow : Window
 
         DataContext = viewModel;
     }
-
-    private void Button_Click(object sender, RoutedEventArgs e)
-    {
-
-    }
 }
