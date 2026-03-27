@@ -8,6 +8,7 @@ public partial class App : System.Windows.Application
 {
 	private ServiceProvider? _serviceProvider;
 	private OverlayWindow? _overlayWindow;
+	private MainWindow? _dashboardWindow;
 
 	protected override void OnStartup(StartupEventArgs e)
 	{
@@ -18,40 +19,110 @@ public partial class App : System.Windows.Application
 
 		
 		ServiceRegistration.EnsureDatabaseCreated(_serviceProvider);
-
-		MainWindow dashboardWindow = _serviceProvider.GetRequiredService<MainWindow>();
 		_overlayWindow = _serviceProvider.GetRequiredService<OverlayWindow>();
-
-		dashboardWindow.Closed += OnDashboardClosed;
-
-		MainWindow = dashboardWindow;
-		dashboardWindow.Show();
 		_overlayWindow.Show();
 	}
 
+	public void OpenOrActivateMainWindow()
+	{
+		if (_serviceProvider is null)
+		{
+			return;
+		}
+
+		if (_dashboardWindow is not null)
+		{
+			if (_dashboardWindow.IsVisible)
+			{
+				if (_dashboardWindow.WindowState == WindowState.Minimized)
+				{
+					_dashboardWindow.WindowState = WindowState.Normal;
+				}
+
+				_dashboardWindow.Activate();
+				_dashboardWindow.Focus();
+				return;
+			}
+
+			_dashboardWindow = null;
+		}
+
+		_dashboardWindow = _serviceProvider.GetRequiredService<MainWindow>();
+		_dashboardWindow.Closed += OnDashboardClosed;
+		_dashboardWindow.Show();
+	}
+
+	public void CloseMainWindowOnly()
+	{
+		ReleaseDashboardWindowResources(closeIfVisible: true);
+	}
+
+	public void ExitEntireApplication()
+	{
+		ReleaseDashboardWindowResources(closeIfVisible: true);
+		ReleaseOverlayWindowResources(closeIfVisible: true);
+
+		Shutdown();
+	}
+
 	private void OnDashboardClosed(object? sender, EventArgs e)
+	{
+		if (sender is MainWindow dashboardWindow)
+		{
+			dashboardWindow.Closed -= OnDashboardClosed;
+			dashboardWindow.DataContext = null;
+			dashboardWindow.Content = null;
+		}
+
+		if (ReferenceEquals(_dashboardWindow, sender))
+		{
+			_dashboardWindow = null;
+		}
+	}
+
+	private void ReleaseDashboardWindowResources(bool closeIfVisible)
+	{
+		if (_dashboardWindow is null)
+		{
+			return;
+		}
+
+		MainWindow dashboardWindow = _dashboardWindow;
+		dashboardWindow.Closed -= OnDashboardClosed;
+
+		if (closeIfVisible && dashboardWindow.IsVisible)
+		{
+			dashboardWindow.Close();
+		}
+
+		dashboardWindow.DataContext = null;
+		dashboardWindow.Content = null;
+		_dashboardWindow = null;
+	}
+
+	private void ReleaseOverlayWindowResources(bool closeIfVisible)
 	{
 		if (_overlayWindow is null)
 		{
 			return;
 		}
 
-		if (_overlayWindow.IsVisible)
+		OverlayWindow overlayWindow = _overlayWindow;
+
+		if (closeIfVisible && overlayWindow.IsVisible)
 		{
-			_overlayWindow.Close();
+			overlayWindow.Close();
 		}
 
+		overlayWindow.DataContext = null;
+		overlayWindow.Content = null;
 		_overlayWindow = null;
 	}
 
 	protected override void OnExit(ExitEventArgs e)
 	{
-		if (_overlayWindow is not null && _overlayWindow.IsVisible)
-		{
-			_overlayWindow.Close();
-		}
-
-		_overlayWindow = null;
+		ReleaseDashboardWindowResources(closeIfVisible: true);
+		ReleaseOverlayWindowResources(closeIfVisible: true);
 		_serviceProvider?.Dispose();
 		_serviceProvider = null;
 		base.OnExit(e);

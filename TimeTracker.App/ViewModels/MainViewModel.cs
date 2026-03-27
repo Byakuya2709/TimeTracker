@@ -7,6 +7,8 @@ namespace TimeTracker.App.ViewModels;
 
 public partial class MainViewModel : ViewModelBase, IDisposable
 {
+    private static readonly TimeSpan TrackingSnapshotRefreshInterval = TimeSpan.FromSeconds(3);
+
     private readonly ITrackingRuntimeService _activityTracker;
     private readonly ITrackingSessionService _trackingSessionService;
     private readonly IUserSettingsService _userSettingsService;
@@ -22,6 +24,10 @@ public partial class MainViewModel : ViewModelBase, IDisposable
     private bool _isRecording;
     private bool _isPaused;
     private bool _isStopped = true;
+    private bool _hasLoadedSessions;
+    private TimeSpan _elapsedDisplayBase = TimeSpan.Zero;
+    private DateTime? _elapsedDisplayRunningSince;
+    private DateTime? _lastSnapshotRefreshAt;
 
     public ICommand StartCommand => _startCommand;
 
@@ -61,7 +67,6 @@ public partial class MainViewModel : ViewModelBase, IDisposable
         InitializeSettingsPageCommands();
         LoadUserSettings();
 
-        LoadTrackingSessions();
         _timer.Start();
     }
 
@@ -116,19 +121,33 @@ public partial class MainViewModel : ViewModelBase, IDisposable
     {
         _activityTracker.Start();
         UpdateActionState(TrackingState.Running);
+        StartElapsedDisplayClock(DateTime.Now);
+        RefreshTrackingSnapshot(forceRefresh: true, DateTime.Now);
     }
 
     private void PauseTracking()
     {
         _activityTracker.Pause();
+        PauseElapsedDisplayClock(DateTime.Now);
         UpdateActionState(TrackingState.Paused);
     }
 
     private void StopTracking()
     {
         _activityTracker.Stop();
+        ResetElapsedDisplayClock();
         UpdateActionState(TrackingState.Stopped);
-        LoadTrackingSessions();
+
+        if (IsSessionsPage && _hasLoadedSessions)
+        {
+            LoadTrackingSessions();
+        }
+
+        CurrentAppName = "Đang khởi tạo...";
+        FocusScore = 0;
+        FocusSummary = "Điểm hiệu suất 0/100 - Đang chờ dữ liệu";
+        Notification = string.Empty;
+        OnPropertyChanged(nameof(HasNotification));
     }
 
     private void SetCurrentPage(DashboardPage page)
@@ -137,7 +156,7 @@ public partial class MainViewModel : ViewModelBase, IDisposable
 
         if (page == DashboardPage.Sessions)
         {
-            LoadTrackingSessions();
+            EnsureSessionsLoaded();
         }
     }
 
@@ -150,6 +169,79 @@ public partial class MainViewModel : ViewModelBase, IDisposable
         _startCommand.RaiseCanExecuteChanged();
         _pauseCommand.RaiseCanExecuteChanged();
         _stopCommand.RaiseCanExecuteChanged();
+    }
+
+    private void EnsureSessionsLoaded()
+    {
+        if (_hasLoadedSessions)
+        {
+            return;
+        }
+
+        LoadTrackingSessions();
+        _hasLoadedSessions = true;
+    }
+
+    private void StartElapsedDisplayClock(DateTime now)
+    {
+        _elapsedDisplayRunningSince = now;
+    }
+
+    private void PauseElapsedDisplayClock(DateTime now)
+    {
+        if (_elapsedDisplayRunningSince is not null)
+        {
+            TimeSpan delta = now - _elapsedDisplayRunningSince.Value;
+            if (delta > TimeSpan.Zero)
+            {
+                _elapsedDisplayBase += delta;
+            }
+        }
+
+        _elapsedDisplayRunningSince = null;
+        ElapsedTime = _elapsedDisplayBase.ToString(@"hh\:mm\:ss");
+    }
+
+    private void ResetElapsedDisplayClock()
+    {
+        _elapsedDisplayBase = TimeSpan.Zero;
+        _elapsedDisplayRunningSince = null;
+        ElapsedTime = _elapsedDisplayBase.ToString(@"hh\:mm\:ss");
+    }
+
+    private void UpdateElapsedDisplay(DateTime now)
+    {
+        TimeSpan elapsed = _elapsedDisplayBase;
+
+        if (_elapsedDisplayRunningSince is not null)
+        {
+            TimeSpan delta = now - _elapsedDisplayRunningSince.Value;
+            if (delta > TimeSpan.Zero)
+            {
+                elapsed += delta;
+            }
+        }
+
+        ElapsedTime = elapsed.ToString(@"hh\:mm\:ss");
+    }
+
+    private void RefreshTrackingSnapshot(bool forceRefresh, DateTime now)
+    {
+        if (!forceRefresh
+            && _lastSnapshotRefreshAt is not null
+            && now - _lastSnapshotRefreshAt.Value < TrackingSnapshotRefreshInterval)
+        {
+            return;
+        }
+
+        TrackingSnapshot snapshot = _activityTracker.Tick();
+        CurrentAppName = snapshot.CurrentAppName;
+        FocusScore = snapshot.FocusScore;
+        FocusSummary = snapshot.FocusSummary;
+        Notification = snapshot.Notification;
+        OnPropertyChanged(nameof(HasNotification));
+
+        _lastSnapshotRefreshAt = now;
     }
 
     public void Dispose()

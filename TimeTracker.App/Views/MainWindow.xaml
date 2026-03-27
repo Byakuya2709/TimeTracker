@@ -124,66 +124,19 @@
                     <Grid Grid.Row="1" Margin="0,16,0,0">
 
                         <Grid Visibility="{Binding IsOverviewPage, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-
-                            <UniformGrid Grid.Row="0" Columns="3" Margin="0,0,0,14">
-                                <Border Style="{StaticResource CardStyle}" Margin="0,0,10,0">
-                                    <StackPanel>
-                                        <TextBlock FontSize="11" Foreground="#5A6B57" Text="Ứng dụng hiện tại"/>
-                                        <TextBlock Margin="0,6,0,0" FontSize="16" FontWeight="SemiBold" Foreground="#1D3022" Text="{Binding CurrentAppName}"/>
-                                    </StackPanel>
-                                </Border>
-                                <Border Style="{StaticResource CardStyle}" Margin="0,0,10,0">
-                                    <StackPanel>
-                                        <TextBlock FontSize="11" Foreground="#5A6B57" Text="Tổng thời gian theo dõi"/>
-                                        <TextBlock Margin="0,6,0,0" FontSize="26" FontWeight="Bold" Foreground="#1D3022" Text="{Binding ElapsedTime}"/>
-                                    </StackPanel>
-                                </Border>
-                                <Border Style="{StaticResource CardStyle}">
-                                    <StackPanel>
-                                        <TextBlock FontSize="11" Foreground="#5A6B57" Text="Điểm hiệu suất"/>
-                                        <TextBlock Margin="0,6,0,0" FontSize="24" FontWeight="Bold" Foreground="#245F35" Text="{Binding FocusScoreText}"/>
-                                        <TextBlock Margin="0,2,0,0" FontSize="12" Foreground="#2D4032" Text="{Binding FocusSummary}"/>
-                                    </StackPanel>
-                                </Border>
-                            </UniformGrid>
-
-                            <Border Grid.Row="1" Style="{StaticResource CardStyle}" Margin="0,0,0,14"
-                                    Visibility="{Binding HasNotification, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock FontSize="14" Margin="0,0,10,0" Foreground="#1E3324" Text="Thông báo:"/>
-                                    <TextBlock FontSize="14" Foreground="#1E3324" TextWrapping="Wrap" Text="{Binding Notification}"/>
+                            <Border Style="{StaticResource CardStyle}"
+                                    Padding="24"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Top">
+                                <StackPanel>
+                                    <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="#1E3324" Text="Trang Tổng quan"/>
+                                    <TextBlock Margin="0,10,0,0"
+                                               FontSize="13"
+                                               Foreground="#4A5B48"
+                                               TextWrapping="Wrap"
+                                               Text="Trang này đang để trống theo cấu hình hiện tại. Dữ liệu tracking được hiển thị trên Overlay."/>
                                 </StackPanel>
                             </Border>
-
-                            <Grid Grid.Row="2">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="300"/>
-                                </Grid.ColumnDefinitions>
-
-                                <Border Grid.Column="0" Style="{StaticResource CardStyle}" Margin="0,0,14,0">
-                                    <StackPanel>
-                                        <TextBlock FontSize="12" FontWeight="SemiBold" Foreground="#50634E" Text="Top 3 ứng dụng trong phiên hiện tại"/>
-                                        <TextBlock Margin="0,8,0,0" FontSize="13" Foreground="#1D3022" Text="{Binding TopAppsSummary}"/>
-                                    </StackPanel>
-                                </Border>
-
-                                <Border Grid.Column="1" Style="{StaticResource CardStyle}">
-                                    <StackPanel>
-                                        <TextBlock FontSize="12" FontWeight="SemiBold" Foreground="#50634E" Text="Điều khiển"/>
-                                        <UniformGrid Margin="0,14,0,0" Columns="3">
-                                            <Button Margin="0,0,8,0" Height="40" Command="{Binding StartCommand}" Background="#DBF1DF" BorderBrush="#BFDCC5" Foreground="#1C5030" Content="Bắt đầu"/>
-                                            <Button Margin="0,0,8,0" Height="40" Command="{Binding PauseCommand}" Background="#F0EEE1" BorderBrush="#DED9C0" Foreground="#5A542A" Content="Tạm dừng"/>
-                                            <Button Height="40" Command="{Binding StopCommand}" Background="#F5E1E1" BorderBrush="#E3C7C7" Foreground="#6A2E2E" Content="Dừng"/>
-                                        </UniformGrid>
-                                    </StackPanel>
-                                </Border>
-                            </Grid>
                         </Grid>
 
                         <Grid Visibility="{Binding IsSessionsPage, Converter={StaticResource BooleanToVisibilityConverter}}">

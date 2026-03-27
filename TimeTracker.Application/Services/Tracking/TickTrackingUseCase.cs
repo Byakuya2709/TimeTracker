@@ -5,8 +5,6 @@ namespace TimeTracker.Application.Services.Tracking;
 
 public class TickTrackingUseCase
 {
-    private static readonly TimeSpan ForegroundAppCheckInterval = TimeSpan.FromSeconds(3);
-
     // Executes one timer tick: accumulate elapsed time, switch app bucket if needed, then build snapshot.
     public TrackingSnapshot Execute(TrackingSessionState state, IActiveAppReader activeAppReader, DateTime now)
     {
@@ -16,23 +14,9 @@ public class TickTrackingUseCase
         }
 
         SessionTimeAccumulator.ApplyElapsedTime(state, now);
-        if (ShouldRefreshForegroundApp(state, now))
-        {
-            TrackForegroundAppTransition(state, activeAppReader);
-            state.LastAppTransitionCheckAt = now;
-        }
+        TrackForegroundAppTransition(state, activeAppReader);
 
         return BuildSnapshot(state);
-    }
-
-    private static bool ShouldRefreshForegroundApp(TrackingSessionState state, DateTime now)
-    {
-        if (state.LastAppTransitionCheckAt is null)
-        {
-            return true;
-        }
-
-        return now - state.LastAppTransitionCheckAt.Value >= ForegroundAppCheckInterval;
     }
 
     private static void TrackForegroundAppTransition(TrackingSessionState state, IActiveAppReader activeAppReader)
@@ -55,29 +39,12 @@ public class TickTrackingUseCase
 
         int score = TrackingRules.CalculateFocusScore(state.LastTrackedAppName, currentAppElapsed);
 
-        IReadOnlyList<AppUsage> topApps = state.SessionAppDurations
-            .Where(pair => !pair.Key.Equals(TrackingRules.UnassignedAppName, StringComparison.OrdinalIgnoreCase))
-            .Where(pair => !pair.Key.Equals(TrackingRules.IdleAppName, StringComparison.OrdinalIgnoreCase))
-            .OrderByDescending(pair => pair.Value)
-            .ThenBy(pair => pair.Key, StringComparer.OrdinalIgnoreCase)
-            .Take(3)
-            .Select(pair => new AppUsage
-            {
-                AppName = pair.Key,
-                Duration = pair.Value
-            })
-            .ToList();
-
         return new TrackingSnapshot
         {
             CurrentAppName = TrackingRules.GetDisplayAppName(state),
-            TotalRecorded = state.RecordedDuration,
-            IdleDuration = state.IdleDuration,
             FocusScore = score,
             FocusSummary = TrackingRules.GetFocusSummary(score, state.RecordedDuration, state.IdleDuration),
-            SuggestionMessage = TrackingRules.GetSuggestionMessage(state.RecordedDuration, score),
-            State = state.State,
-            TopApps = topApps
+            Notification = TrackingRules.GetSuggestionMessage(state.RecordedDuration, score)
         };
     }
 }

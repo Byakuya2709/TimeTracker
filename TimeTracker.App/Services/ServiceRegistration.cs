@@ -41,7 +41,7 @@ public static class ServiceRegistration
         services.AddSingleton<ITrackingRuntimeService>(provider => provider.GetRequiredService<ActivityTracker>());
 
         services.AddSingleton<MainViewModel>();
-        services.AddSingleton(provider => new MainWindow(provider.GetRequiredService<MainViewModel>()));
+        services.AddTransient(provider => new MainWindow(provider.GetRequiredService<MainViewModel>()));
         services.AddSingleton(provider => new OverlayWindow(provider.GetRequiredService<MainViewModel>()));
 
         return services;

@@ -44,7 +44,11 @@ public partial class MainViewModel
             if (SetProperty(ref _selectedWeekDate, normalizedDate))
             {
                 OnPropertyChanged(nameof(WeekRangeTitle));
-                LoadTrackingSessions();
+
+                if (IsSessionsPage && _hasLoadedSessions)
+                {
+                    LoadTrackingSessions();
+                }
             }
         }
     }
@@ -85,7 +89,11 @@ public partial class MainViewModel
     {
         _deleteSelectedSessionCommand = new RelayCommand(DeleteSelectedSession, () => SelectedTrackingSession is not null);
         _selectTrackingSessionCommand = new RelayCommand<TrackingSessionListItem>(SelectTrackingSession);
-        _refreshSessionsCommand = new RelayCommand(() => LoadTrackingSessions());
+        _refreshSessionsCommand = new RelayCommand(() =>
+        {
+            _hasLoadedSessions = true;
+            LoadTrackingSessions();
+        });
     }
 
     private partial void LoadTrackingSessions(string? customStatusMessage)

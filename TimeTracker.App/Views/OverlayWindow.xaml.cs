@@ -96,4 +96,19 @@ public partial class OverlayWindow : Window
             DragMove();
         }
     }
+
+    private static App? GetAppInstance()
+    {
+        return System.Windows.Application.Current as App;
+    }
+
+    private void OpenMainWindowButton_Click(object sender, RoutedEventArgs e)
+    {
+        GetAppInstance()?.OpenOrActivateMainWindow();
+    }
+
+    private void ExitAppButton_Click(object sender, RoutedEventArgs e)
+    {
+        GetAppInstance()?.ExitEntireApplication();
+    }
 }

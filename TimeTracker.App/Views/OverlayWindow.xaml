@@ -61,6 +61,41 @@
             </Grid>
         </Border>
 
+
+ <Border Grid.Row="1"
+                Grid.Column="1"
+                CornerRadius="20"
+                BorderBrush="#44FFFFFF"
+                BorderThickness="1"
+                Background="#CCF5F7F6"
+                VerticalAlignment="Top"
+                Width="260"
+                Margin="0,8,0,0"
+                Visibility="{Binding IsStopped, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+            <Grid Margin="16,0,8,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+
+                <Grid VerticalAlignment="Center">
+                    <materialDesign:PackIcon Kind="Badge" Width="22" Height="22" Margin="0,0,8,0"/>
+                </Grid>
+
+
+                <TextBlock Grid.Column="1"
+                           FontSize="12"
+                           FontWeight="SemiBold"
+                           Foreground="#1A1C1C"
+                           VerticalAlignment="Center"
+                           TextWrapping="Wrap"
+                           Padding="0,10"
+                           Text="Bộ đếm sẽ có đỗ trễ từ 2-5s do tối ưu hiệu năng."/>
+            </Grid>
+        </Border>
+
         <Border Grid.Row="0"
                 Grid.Column="1"
                 Width="260"
@@ -150,23 +185,39 @@
 
                 <Border Grid.Row="3"
                         Margin="0,12,0,0"
-                        Padding="10,8"
+                        Padding="8"
                         CornerRadius="12"
                         Background="#4DFFFFFF"
                         BorderBrush="#22000000"
                         BorderThickness="1">
-                    <StackPanel>
-                        <TextBlock FontSize="10"
-                                   FontWeight="SemiBold"
-                                   Foreground="#3E4942"
-                                   Text="TOP 3 ỨNG DỤNG"/>
-                        <TextBlock Margin="0,6,0,0"
-                                   FontSize="12"
-                                   Foreground="#1A1C1C"
-                                   Text="{Binding TopAppsSummary}"
-                                   TextWrapping="Wrap"/>
-                    </StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0"
+                                Height="30"
+                                FontSize="11"
+                                FontWeight="SemiBold"
+                                Content="Mở Main"
+                                Click="OpenMainWindowButton_Click"/>
+
+                        <Button Grid.Column="4"
+                                Height="30"
+                                FontSize="11"
+                                FontWeight="SemiBold"
+                                Background="#F1D9D9"
+                                BorderBrush="#D4B2B2"
+                                Foreground="#6A2E2E"
+                                Content="Thoát App"
+                                Click="ExitAppButton_Click"/>
+                    </Grid>
                 </Border>
+
 
                 <Border Grid.Row="4"
                         Margin="0,12,0,0"
