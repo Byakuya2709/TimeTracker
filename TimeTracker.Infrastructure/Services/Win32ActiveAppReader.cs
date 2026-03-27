@@ -27,6 +27,7 @@ public class Win32ActiveAppReader : IActiveAppReader, IIdleThresholdConfigurable
     private uint _idleThresholdMilliseconds;
 
     private static readonly ConcurrentDictionary<int, string> ProcessDisplayNameCache = new();
+    private static readonly BrowserAddressBarReader BrowserAddressBarReader = new();
 
     public Win32ActiveAppReader()
         : this(TimeSpan.FromSeconds(DefaultIdleThresholdSeconds))
@@ -58,7 +59,7 @@ public class Win32ActiveAppReader : IActiveAppReader, IIdleThresholdConfigurable
             return _lastKnownAppDisplayName;
         }
 
-        if (foregroundWindow == _lastForegroundWindow)
+        if (foregroundWindow == _lastForegroundWindow && !IsSupportedBrowserWindow(foregroundWindow))
         {
             return _lastResolvedAppName;
         }
@@ -152,17 +153,16 @@ public class Win32ActiveAppReader : IActiveAppReader, IIdleThresholdConfigurable
             return UnknownAppName;
         }
 
-        int pid = (int)processId;
-        if (ProcessDisplayNameCache.TryGetValue(pid, out string? cachedName)
-            && !string.IsNullOrWhiteSpace(cachedName))
-        {
-            return cachedName;
-        }
-
         try
         {
+            int pid = (int)processId;
             Process process = Process.GetProcessById(pid);
-            string displayName = GetDisplayNameFromProcess(process);
+            string processName = process.ProcessName;
+
+            string displayName = ProcessDisplayNameCache.TryGetValue(pid, out string? cachedName)
+                && !string.IsNullOrWhiteSpace(cachedName)
+                ? cachedName
+                : GetDisplayNameFromProcess(process);
 
             if (!string.IsNullOrWhiteSpace(displayName)
                 && !displayName.Equals(UnknownAppName, StringComparison.OrdinalIgnoreCase))
@@ -175,11 +175,41 @@ public class Win32ActiveAppReader : IActiveAppReader, IIdleThresholdConfigurable
                 ProcessDisplayNameCache[pid] = displayName;
             }
 
+            if (BrowserAddressBarReader.IsSupportedBrowser(processName)
+                && BrowserAddressBarReader.TryResolveTrackingAppName(windowHandle, displayName, out string trackingAppName))
+            {
+                return trackingAppName;
+            }
+
             return displayName;
         }
         catch
         {
             return UnknownAppName;
+        }
+    }
+
+    private static bool IsSupportedBrowserWindow(IntPtr windowHandle)
+    {
+        if (windowHandle == IntPtr.Zero)
+        {
+            return false;
+        }
+
+        _ = GetWindowThreadProcessId(windowHandle, out uint processId);
+        if (processId == 0)
+        {
+            return false;
+        }
+
+        try
+        {
+            Process process = Process.GetProcessById((int)processId);
+            return BrowserAddressBarReader.IsSupportedBrowser(process.ProcessName);
+        }
+        catch
+        {
+            return false;
         }
     }
 
