@@ -89,9 +89,9 @@ public partial class MainViewModel : ViewModelBase, IDisposable
     public string PageTitle => CurrentPage switch
     {
         DashboardPage.Overview => "Tổng quan",
-        DashboardPage.Sessions => "Lịch Sử",
-        DashboardPage.Settings => "Thiết Lập",
-        _ => "Dashboard"
+        DashboardPage.Sessions => "Lịch sử",
+        DashboardPage.Settings => "Thiết lập",
+        _ => "Bảng điều khiển"
     };
 
     public bool IsRecording

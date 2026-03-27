@@ -6,12 +6,13 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="TimeTracker Dashboard"
+        Title="Bảng điều khiển TimeTracker"
         Width="1240"
         Height="760"
         MinWidth="980"
         MinHeight="620"
         WindowStartupLocation="CenterScreen"
+        FontFamily="pack://application:,,,/TimeTracker.App;component/Resourses/Assets/Fonts/#Inter"
         Background="#E7EDE1">
 
 
@@ -32,7 +33,7 @@
 
                 <StackPanel Grid.Row="0">
                     <TextBlock FontSize="28" FontWeight="Bold" Foreground="#F3FAEF" Text="TimeTracker"/>
-                    <TextBlock Margin="0,4,0,0" FontSize="12" Foreground="#C9DFC6" Text="Personal focus dashboard"/>
+                    <TextBlock Margin="0,4,0,0" FontSize="12" Foreground="#C9DFC6" Text="Bảng điều khiển tập trung cá nhân"/>
                 </StackPanel>
 
                 <StackPanel Grid.Row="1" Margin="0,30,0,0">
@@ -54,7 +55,7 @@
                                 FontSize="14"
                                 FontWeight="SemiBold"
                                 Foreground="#F3FAEF"
-                                Text="Setting"/>
+                                Text="Tổng quan"/>
                         </StackPanel>
 
                     </RadioButton>
@@ -78,7 +79,7 @@
                                 FontSize="14"
                                 FontWeight="SemiBold"
                                 Foreground="#F3FAEF"
-                                Text="History"/>
+                                Text="Lịch sử"/>
                         </StackPanel>
 
                     </RadioButton>
@@ -99,7 +100,7 @@
                  FontSize="14"
                  FontWeight="SemiBold"
                  Foreground="#F3FAEF"
-                 Text="Setting"/>
+                 Text="Thiết lập"/>
                         </StackPanel>
                     </RadioButton>
                 </StackPanel>
@@ -132,19 +133,19 @@
                             <UniformGrid Grid.Row="0" Columns="3" Margin="0,0,0,14">
                                 <Border Style="{StaticResource CardStyle}" Margin="0,0,10,0">
                                     <StackPanel>
-                                        <TextBlock FontSize="11" Foreground="#5A6B57" Text="Current app"/>
+                                        <TextBlock FontSize="11" Foreground="#5A6B57" Text="Ứng dụng hiện tại"/>
                                         <TextBlock Margin="0,6,0,0" FontSize="16" FontWeight="SemiBold" Foreground="#1D3022" Text="{Binding CurrentAppName}"/>
                                     </StackPanel>
                                 </Border>
                                 <Border Style="{StaticResource CardStyle}" Margin="0,0,10,0">
                                     <StackPanel>
-                                        <TextBlock FontSize="11" Foreground="#5A6B57" Text="Total recording"/>
+                                        <TextBlock FontSize="11" Foreground="#5A6B57" Text="Tổng thời gian theo dõi"/>
                                         <TextBlock Margin="0,6,0,0" FontSize="26" FontWeight="Bold" Foreground="#1D3022" Text="{Binding ElapsedTime}"/>
                                     </StackPanel>
                                 </Border>
                                 <Border Style="{StaticResource CardStyle}">
                                     <StackPanel>
-                                        <TextBlock FontSize="11" Foreground="#5A6B57" Text="Focus score"/>
+                                        <TextBlock FontSize="11" Foreground="#5A6B57" Text="Điểm hiệu suất"/>
                                         <TextBlock Margin="0,6,0,0" FontSize="24" FontWeight="Bold" Foreground="#245F35" Text="{Binding FocusScoreText}"/>
                                         <TextBlock Margin="0,2,0,0" FontSize="12" Foreground="#2D4032" Text="{Binding FocusSummary}"/>
                                     </StackPanel>
@@ -154,7 +155,7 @@
                             <Border Grid.Row="1" Style="{StaticResource CardStyle}" Margin="0,0,0,14"
                                     Visibility="{Binding HasNotification, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock FontSize="14" Margin="0,0,10,0" Foreground="#1E3324" Text="Alert:"/>
+                                    <TextBlock FontSize="14" Margin="0,0,10,0" Foreground="#1E3324" Text="Thông báo:"/>
                                     <TextBlock FontSize="14" Foreground="#1E3324" TextWrapping="Wrap" Text="{Binding Notification}"/>
                                 </StackPanel>
                             </Border>
@@ -167,18 +168,18 @@
 
                                 <Border Grid.Column="0" Style="{StaticResource CardStyle}" Margin="0,0,14,0">
                                     <StackPanel>
-                                        <TextBlock FontSize="12" FontWeight="SemiBold" Foreground="#50634E" Text="Top 3 apps in current session"/>
+                                        <TextBlock FontSize="12" FontWeight="SemiBold" Foreground="#50634E" Text="Top 3 ứng dụng trong phiên hiện tại"/>
                                         <TextBlock Margin="0,8,0,0" FontSize="13" Foreground="#1D3022" Text="{Binding TopAppsSummary}"/>
                                     </StackPanel>
                                 </Border>
 
                                 <Border Grid.Column="1" Style="{StaticResource CardStyle}">
                                     <StackPanel>
-                                        <TextBlock FontSize="12" FontWeight="SemiBold" Foreground="#50634E" Text="Controls"/>
+                                        <TextBlock FontSize="12" FontWeight="SemiBold" Foreground="#50634E" Text="Điều khiển"/>
                                         <UniformGrid Margin="0,14,0,0" Columns="3">
-                                            <Button Margin="0,0,8,0" Height="40" Command="{Binding StartCommand}" Background="#DBF1DF" BorderBrush="#BFDCC5" Foreground="#1C5030" Content="Start"/>
-                                            <Button Margin="0,0,8,0" Height="40" Command="{Binding PauseCommand}" Background="#F0EEE1" BorderBrush="#DED9C0" Foreground="#5A542A" Content="Pause"/>
-                                            <Button Height="40" Command="{Binding StopCommand}" Background="#F5E1E1" BorderBrush="#E3C7C7" Foreground="#6A2E2E" Content="Stop"/>
+                                            <Button Margin="0,0,8,0" Height="40" Command="{Binding StartCommand}" Background="#DBF1DF" BorderBrush="#BFDCC5" Foreground="#1C5030" Content="Bắt đầu"/>
+                                            <Button Margin="0,0,8,0" Height="40" Command="{Binding PauseCommand}" Background="#F0EEE1" BorderBrush="#DED9C0" Foreground="#5A542A" Content="Tạm dừng"/>
+                                            <Button Height="40" Command="{Binding StopCommand}" Background="#F5E1E1" BorderBrush="#E3C7C7" Foreground="#6A2E2E" Content="Dừng"/>
                                         </UniformGrid>
                                     </StackPanel>
                                 </Border>
@@ -194,10 +195,10 @@
 
                             <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,14" VerticalAlignment="Center">
                                 <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center">
-                                    <TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="Black" Foreground="#1E3324" Text="Tracking Sessions"/>
+                                    <TextBlock VerticalAlignment="Center" FontSize="24" FontWeight="Black" Foreground="#1E3324" Text="Phiên theo dõi"/>
                                     <StackPanel Margin="0,4,0,0" Orientation="Horizontal">
                                         <Border Background="#E8F1E4" CornerRadius="10" Padding="2,3">
-                                            <TextBlock FontSize="11" FontWeight="SemiBold" Foreground="#2E5037" Text="Weekly timeline"/>
+                                            <TextBlock FontSize="11" FontWeight="SemiBold" Foreground="#2E5037" Text="Dòng thời gian tuần"/>
                                         </Border>
                                         <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" FontSize="12" Foreground="#4A5B48" Text="{Binding WeekRangeTitle}"/>
                                     </StackPanel>
@@ -207,8 +208,8 @@
                                     <DatePicker 
                                         Style="{StaticResource ModernDatePicker}"
                                         SelectedDate="{Binding SelectedWeekDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                    <Button Width="100" Height="34" Margin="0,0,8,0" Style="{StaticResource SessionActionButtonStyle}" Foreground="White" Command="{Binding RefreshSessionsCommand}" Content="Refresh"/>
-                                    <Button Width="146" Height="34" Style="{StaticResource SessionActionButtonStyle}" Background="DarkRed" BorderBrush="#D8C0C0" Foreground="White" Command="{Binding DeleteSelectedSessionCommand}" Content="Delete selected"/>
+                                    <Button Width="100" Height="34" Margin="0,0,8,0" Style="{StaticResource SessionActionButtonStyle}" Foreground="White" Command="{Binding RefreshSessionsCommand}" Content="Làm mới"/>
+                                    <Button Width="146" Height="34" Style="{StaticResource SessionActionButtonStyle}" Background="DarkRed" BorderBrush="#D8C0C0" Foreground="White" Command="{Binding DeleteSelectedSessionCommand}" Content="Xóa mục chọn"/>
                                 </StackPanel>
                             </DockPanel>
 
@@ -230,7 +231,7 @@
                                                             <DockPanel LastChildFill="False">
                                                                 <TextBlock FontSize="16" FontWeight="SemiBold" Foreground="#24422A" Text="{Binding DateTitle}"/>
                                                                 <Border DockPanel.Dock="Right" Background="#E6EFE2" CornerRadius="8" Padding="8,2">
-                                                                    <TextBlock Style="{StaticResource SessionMetaTextStyle}" FontWeight="SemiBold" Text="{Binding Sessions.Count, StringFormat={}{0} sessions}"/>
+                                                                    <TextBlock Style="{StaticResource SessionMetaTextStyle}" FontWeight="SemiBold" Text="{Binding Sessions.Count, StringFormat={}{0} phiên}"/>
                                                                 </Border>
                                                             </DockPanel>
 
@@ -310,7 +311,7 @@
                                         </Grid.RowDefinitions>
 
                                  
-                                            <TextBlock FontSize="16" FontWeight="SemiBold" Foreground="#1E3324" Text="Session details"/>
+                                            <TextBlock FontSize="16" FontWeight="SemiBold" Foreground="#1E3324" Text="Chi tiết phiên"/>
                                         
 
                                         <TextBlock Grid.Row="1"
@@ -339,20 +340,20 @@
                                             <UniformGrid Grid.Row="0" Columns="2" Margin="0,0,0,12">
                                                 <Border Margin="0,0,8,0" Background="#F1F7EE" BorderBrush="#D8E5D4" BorderThickness="1" CornerRadius="10" Padding="10,8">
                                                     <StackPanel>
-                                                        <TextBlock FontSize="11" Foreground="#60715E" Text="Total"/>
+                                                        <TextBlock FontSize="11" Foreground="#60715E" Text="Tổng"/>
                                                         <TextBlock Margin="0,2,0,0" FontSize="14" FontWeight="SemiBold" Foreground="#1D3022" Text="{Binding SelectedTrackingSession.TotalDuration}"/>
                                                     </StackPanel>
                                                 </Border>
                                                 <Border Background="#F8F6EC" BorderBrush="#E6DDC8" BorderThickness="1" CornerRadius="10" Padding="10,8">
 
                                                     <StackPanel>
-                                                        <TextBlock FontSize="11" Foreground="#6D6A54" Text="Idle"/>
+                                                        <TextBlock FontSize="11" Foreground="#6D6A54" Text="Không hoạt động"/>
                                                         <TextBlock Margin="0,2,0,0" FontSize="14" FontWeight="SemiBold" Foreground="#3F3A20" Text="{Binding SelectedTrackingSession.IdleDuration}"/>
                                                     </StackPanel> 
                                                 </Border>
                                             </UniformGrid>
 
-                                            <TextBlock Grid.Row="1" FontSize="16" FontWeight="SemiBold" Foreground="#24422A" Text="App details"/>
+                                            <TextBlock Grid.Row="1" FontSize="16" FontWeight="SemiBold" Foreground="#24422A" Text="Chi tiết ứng dụng"/>
                                             <Border Grid.Row="2" Grid.RowSpan="2" Margin="0,8,0,0" Background="#F7FBF5" BorderBrush="#DCE6D8" BorderThickness="1" CornerRadius="10" Padding="10">
                                                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                                                     <ItemsControl ItemsSource="{Binding SelectedTrackingSession.AppUsageProgressItems}">
@@ -394,7 +395,7 @@
                                                    HorizontalAlignment="Center"
                                                    FontSize="12"
                                                    Foreground="#60715E"
-                                                   Text="Chọn một session để xem chi tiết."
+                                                   Text="Chọn một phiên để xem chi tiết."
                                                    Visibility="{Binding NoSelectedTrackingSession, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                                     </Grid>
                                 </Border>
@@ -414,26 +415,26 @@
 
                             <Border Grid.Column="0" Style="{StaticResource CardStyle}" Background="#F3F3F3" Padding="24" BorderBrush="#E3E8DF">
                                 <StackPanel>
-                                    <TextBlock FontSize="14" FontWeight="Bold" Foreground="#3E4942" Text="TRACKING PREFERENCES"/>
+                                    <TextBlock FontSize="14" FontWeight="Bold" Foreground="#3E4942" Text="TÙY CHỌN THEO DÕI"/>
 
                                     <StackPanel Margin="0,24,0,0">
-                                        <TextBlock FontSize="14" FontWeight="Medium" Foreground="#1A1C1C" Text="Idle Detection"/>
+                                        <TextBlock FontSize="14" FontWeight="Medium" Foreground="#1A1C1C" Text="Phát hiện không hoạt động"/>
                                         <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
                                             <Button Width="120" Margin="0,0,10,0"
                                                     Command="{Binding SetIdleDetection5Command}"
                                                     Tag="{Binding IsIdleDetection5Selected}"
                                                     Style="{StaticResource PreferenceOptionButtonStyle}"
-                                                    Content="5 Minutes"/>
+                                                    Content="5 phút"/>
                                             <Button Width="120"
                                                     Command="{Binding SetIdleDetection10Command}"
                                                     Tag="{Binding IsIdleDetection10Selected}"
                                                     Style="{StaticResource PreferenceOptionButtonStyle}"
-                                                    Content="10 Minutes"/>
+                                                    Content="10 phút"/>
                                         </StackPanel>
                                     </StackPanel>
 
                                     <DockPanel Margin="0,22,0,0" LastChildFill="False">
-                                        <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" FontSize="14" Foreground="#1A1C1C" Text="Auto-start on Boot"/>
+                                        <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" FontSize="14" Foreground="#1A1C1C" Text="Tự khởi động cùng Windows"/>
                                         <Button DockPanel.Dock="Right"
                                                 Width="64"
                                                 Tag="{Binding AutoStartOnBoot}"
@@ -444,7 +445,7 @@
 
                                     <StackPanel Margin="0,24,0,0">
                                         <DockPanel LastChildFill="False">
-                                            <TextBlock DockPanel.Dock="Left" FontSize="14" Foreground="#1A1C1C" Text="Overlay Opacity"/>
+                                            <TextBlock DockPanel.Dock="Left" FontSize="14" Foreground="#1A1C1C" Text="Độ mờ lớp phủ"/>
                                             <TextBlock DockPanel.Dock="Right" FontSize="12" FontWeight="Bold" Foreground="#006947" Text="{Binding OverlayOpacityText}"/>
                                         </DockPanel>
                                         <Slider Margin="0,12,0,0"
@@ -459,7 +460,7 @@
 
                             <Border Grid.Column="2" Style="{StaticResource CardStyle}" Background="#F3F3F3" Padding="24" BorderBrush="#E3E8DF">
                                 <StackPanel>
-                                    <TextBlock FontSize="14" FontWeight="Bold" Foreground="#3E4942" Text="OVERLAY POSITION"/>
+                                    <TextBlock FontSize="14" FontWeight="Bold" Foreground="#3E4942" Text="VỊ TRÍ LỚP PHỦ"/>
                                     <UniformGrid Margin="0,16,0,0" Columns="3" Rows="3">
                                         <RadioButton GroupName="OverlayPositionGrid" Margin="0,0,6,6" Style="{StaticResource OverlayAnchorButtonStyle}" IsChecked="{Binding IsTopLeftOverlay, Mode=OneWay}" Command="{Binding SetOverlayPositionCommand}" CommandParameter="{x:Static vm:OverlayAnchor.TopLeft}">
                                             <materialDesign:PackIcon Kind="ArrowTopLeft" Width="18" Height="18"/>
@@ -503,8 +504,8 @@
 
                                     <Border Margin="0,18,0,0" Background="#FFFFFF" BorderBrush="#DCE6D8" BorderThickness="1" CornerRadius="10" Padding="12">
                                         <StackPanel>
-                                            <TextBlock FontSize="12" Foreground="#5F6F64" Text="Preview"/>
-                                            <TextBlock Margin="0,6,0,0" FontSize="13" FontWeight="SemiBold" Foreground="#1E3324" Text="Overlay opacity and position have been updated."/>
+                                            <TextBlock FontSize="12" Foreground="#5F6F64" Text="Xem trước"/>
+                                            <TextBlock Margin="0,6,0,0" FontSize="13" FontWeight="SemiBold" Foreground="#1E3324" Text="Đã cập nhật độ mờ và vị trí lớp phủ."/>
                                         </StackPanel>
                                     </Border>
                                 </StackPanel>

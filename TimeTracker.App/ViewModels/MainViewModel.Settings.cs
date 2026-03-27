@@ -57,7 +57,7 @@ public partial class MainViewModel
         }
     }
 
-    public string AutoStartOnBootStateText => AutoStartOnBoot ? "ON" : "OFF";
+    public string AutoStartOnBootStateText => AutoStartOnBoot ? "BẬT" : "TẮT";
 
     public int OverlayOpacity
     {

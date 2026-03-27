@@ -12,7 +12,7 @@ public partial class MainViewModel
     private RelayCommand<TrackingSessionListItem> _selectTrackingSessionCommand = null!;
     private readonly List<TrackingSessionListItem> _weekSessions = [];
 
-    private string _sessionsStatusMessage = "No tracking sessions in this week.";
+    private string _sessionsStatusMessage = "Không có phiên theo dõi nào trong tuần này.";
     private DateTime? _selectedWeekDate = DateTime.Today;
     private TrackingSessionListItem? _selectedTrackingSession;
 
@@ -58,7 +58,7 @@ public partial class MainViewModel
             DateOnly weekStart = dateInWeek.AddDays(-mondayOffset);
             DateOnly weekEnd = weekStart.AddDays(6);
 
-            return $"Week: {weekStart:dd MMM yyyy} - {weekEnd:dd MMM yyyy}";
+            return $"Tuần: {weekStart:dd MMM yyyy} - {weekEnd:dd MMM yyyy}";
         }
     }
 
@@ -116,8 +116,8 @@ public partial class MainViewModel
         }
 
         SessionsStatusMessage = customStatusMessage ?? (_weekSessions.Count == 0
-            ? "No tracking sessions in this week."
-            : $"{_weekSessions.Count} session(s) found in selected week.");
+            ? "Không có phiên theo dõi nào trong tuần này."
+            : $"Tìm thấy {_weekSessions.Count} phiên trong tuần đã chọn.");
 
         if (SelectedTrackingSession is not null)
         {
@@ -143,14 +143,14 @@ public partial class MainViewModel
         }
         catch
         {
-            LoadTrackingSessions("Could not delete session because of a database error.");
+            LoadTrackingSessions("Không thể xóa phiên do lỗi cơ sở dữ liệu.");
             return;
         }
 
         SelectedTrackingSession = null;
         LoadTrackingSessions(isDeleted
-            ? "Tracking session deleted."
-            : "Could not delete session. It may have been removed already.");
+            ? "Đã xóa phiên theo dõi."
+            : "Không thể xóa phiên. Có thể phiên đã bị xóa trước đó.");
     }
 
     private void SelectTrackingSession(TrackingSessionListItem? session)
@@ -203,7 +203,7 @@ public partial class MainViewModel
             : string.Join(", ", topApps.Select(item => $"{item.AppName} ({FormatDuration(item.Duration)})"));
 
         string appBreakdown = allApps.Count == 0
-            ? "No app activity details."
+            ? "Không có chi tiết hoạt động ứng dụng."
             : string.Join(Environment.NewLine, allApps.Select(item => $"- {item.AppName}: {FormatDuration(item.Duration)}"));
 
         string startedAt = session.StartedAt.ToString("HH:mm:ss");

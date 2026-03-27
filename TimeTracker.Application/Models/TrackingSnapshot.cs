@@ -9,14 +9,14 @@ public enum TrackingState
 
 public class AppUsage
 {
-    public string AppName { get; init; } = "Unknown App";
+    public string AppName { get; init; } = "Ứng dụng không xác định";
 
     public TimeSpan Duration { get; init; }
 }
 
 public class TrackingSnapshot
 {
-    public string CurrentAppName { get; init; } = "Starting...";
+    public string CurrentAppName { get; init; } = "Đang khởi tạo...";
 
     public TimeSpan TotalRecorded { get; init; }
 
@@ -24,7 +24,7 @@ public class TrackingSnapshot
 
     public int FocusScore { get; init; }
 
-    public string FocusSummary { get; init; } = "Settling In";
+    public string FocusSummary { get; init; } = "Điểm hiệu suất 0/100 - Đang chờ dữ liệu";
 
     public string SuggestionMessage { get; init; } = string.Empty;
 

@@ -28,7 +28,8 @@ public static class TrackingRules
     private static bool IsUnknownOrEmpty(string appName)
     {
         return string.IsNullOrWhiteSpace(appName)
-            || appName.Equals("Unknown App", StringComparison.OrdinalIgnoreCase);
+            || appName.Equals("Unknown App", StringComparison.OrdinalIgnoreCase)
+            || appName.Equals("Ứng dụng không xác định", StringComparison.OrdinalIgnoreCase);
     }
 
     public static bool IsUnassignedAppName(string appName)
@@ -46,12 +47,12 @@ public static class TrackingRules
         return state.State switch
         {
             TrackingState.Running => IsUnassignedAppName(state.LastTrackedAppName)
-                ? "Waiting for app switch"
+                ? "Đang chờ chuyển ứng dụng"
                 : IsIdleAppName(state.LastTrackedAppName)
-                    ? "Idle"
+                    ? "Không hoạt động"
                 : state.LastTrackedAppName,
-            TrackingState.Paused => "Paused",
-            _ => "Ready"
+            TrackingState.Paused => "Đã tạm dừng",
+            _ => "Sẵn sàng"
         };
     }
 
@@ -68,48 +69,57 @@ public static class TrackingRules
         return Math.Clamp(score, 10, 100);
     }
 
-    public static string GetFocusSummary(int score)
+    public static string GetFocusSummary(int score, TimeSpan totalRecorded, TimeSpan idleDuration)
     {
-        if (score >= 85)
+        if (totalRecorded < TimeSpan.FromMinutes(5))
         {
-            return "Peak Performance";
+            return $"Điểm hiệu suất {score}/100 - Đang thu thập dữ liệu";
         }
 
-        if (score >= 65)
+        double idleRatio = totalRecorded.TotalSeconds <= 0
+            ? 0
+            : idleDuration.TotalSeconds / totalRecorded.TotalSeconds;
+
+        if (score >= 85 && idleRatio <= 0.15)
         {
-            return "Deep Work";
+            return $"Điểm hiệu suất {score}/100 - Hiệu suất rất cao";
         }
 
-        if (score >= 40)
+        if (score >= 70 && idleRatio <= 0.25)
         {
-            return "Steady Focus";
+            return $"Điểm hiệu suất {score}/100 - Hiệu suất tốt và ổn định";
         }
 
-        return "Needs Attention";
+        if (score >= 50)
+        {
+            return $"Điểm hiệu suất {score}/100 - Có thể cải thiện thêm";
+        }
+
+        return $"Điểm hiệu suất {score}/100 - Cần tối ưu nhịp làm việc";
     }
 
     public static string GetSuggestionMessage(TimeSpan totalRecorded, int score)
     {
         if (totalRecorded >= TimeSpan.FromMinutes(90))
         {
-            return "Ban da tap trung rat tot. Dung day va nghi 10 phut nhe.";
+            return "Bạn đã tập trung rất tốt. Đứng dậy và nghỉ 10 phút nhé.";
         }
 
         if (totalRecorded >= TimeSpan.FromMinutes(50))
         {
-            return "Sap du 1 chu ky. Co the nghi mat 5 phut de giu nhiet.";
+            return "Sắp đủ một chu kỳ. Có thể nghỉ mắt 5 phút để giữ nhịp.";
         }
 
         if (score >= 80)
         {
-            return "Dang vao form cuc on. Co len, tiep tuc phat huy.";
+            return "Bạn đang vào guồng rất tốt. Cố lên, tiếp tục phát huy.";
         }
 
         if (score < 45)
         {
-            return "Thu doi tac vu nho hoac nghi 2 phut de lay lai nhip.";
+            return "Thử đổi tác vụ nhỏ hoặc nghỉ 2 phút để lấy lại nhịp.";
         }
 
-        return "Nhip do dang on. Giu deu, ban dang lam rat tot.";
+        return "";
     }
 }

@@ -58,7 +58,7 @@ public class TickTrackingUseCase
             TotalRecorded = state.RecordedDuration,
             IdleDuration = state.IdleDuration,
             FocusScore = score,
-            FocusSummary = TrackingRules.GetFocusSummary(score),
+            FocusSummary = TrackingRules.GetFocusSummary(score, state.RecordedDuration, state.IdleDuration),
             SuggestionMessage = TrackingRules.GetSuggestionMessage(state.RecordedDuration, score),
             State = state.State,
             TopApps = topApps
