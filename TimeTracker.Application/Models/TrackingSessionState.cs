@@ -10,6 +10,8 @@ public class TrackingSessionState
 
     public DateTime? LastTickAt { get; set; }
 
+    public DateTime? LastAppTransitionCheckAt { get; set; }
+
     public string LastTrackedAppName { get; set; } = TrackingRules.UnassignedAppName;
 
     public TimeSpan RecordedDuration { get; set; } = TimeSpan.Zero;

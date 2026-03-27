@@ -16,6 +16,7 @@ public class StopTrackingUseCase
         }
 
         state.LastTickAt = null;
+        state.LastAppTransitionCheckAt = null;
         state.State = TrackingState.Stopped;
 
         PersistSessionIfAny(state, activityLogStore, now);

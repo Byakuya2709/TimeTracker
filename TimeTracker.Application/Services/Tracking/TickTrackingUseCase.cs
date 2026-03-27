@@ -5,6 +5,8 @@ namespace TimeTracker.Application.Services.Tracking;
 
 public class TickTrackingUseCase
 {
+    private static readonly TimeSpan ForegroundAppCheckInterval = TimeSpan.FromSeconds(3);
+
     // Executes one timer tick: accumulate elapsed time, switch app bucket if needed, then build snapshot.
     public TrackingSnapshot Execute(TrackingSessionState state, IActiveAppReader activeAppReader, DateTime now)
     {
@@ -14,9 +16,23 @@ public class TickTrackingUseCase
         }
 
         SessionTimeAccumulator.ApplyElapsedTime(state, now);
-        TrackForegroundAppTransition(state, activeAppReader);
+        if (ShouldRefreshForegroundApp(state, now))
+        {
+            TrackForegroundAppTransition(state, activeAppReader);
+            state.LastAppTransitionCheckAt = now;
+        }
 
         return BuildSnapshot(state);
+    }
+
+    private static bool ShouldRefreshForegroundApp(TrackingSessionState state, DateTime now)
+    {
+        if (state.LastAppTransitionCheckAt is null)
+        {
+            return true;
+        }
+
+        return now - state.LastAppTransitionCheckAt.Value >= ForegroundAppCheckInterval;
     }
 
     private static void TrackForegroundAppTransition(TrackingSessionState state, IActiveAppReader activeAppReader)

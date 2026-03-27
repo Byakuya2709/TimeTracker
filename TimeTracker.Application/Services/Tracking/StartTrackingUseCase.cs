@@ -22,6 +22,7 @@ public class StartTrackingUseCase
         string activeAppName = activeAppReader.GetActiveAppName();
         state.LastTrackedAppName = TrackingRules.ResolveTrackedAppName(activeAppName);
         state.LastTickAt = now;
+        state.LastAppTransitionCheckAt = now;
 
         state.State = TrackingState.Running;
     }
@@ -32,6 +33,7 @@ public class StartTrackingUseCase
         state.RecordedDuration = TimeSpan.Zero;
         state.SessionStartedAt = null;
         state.LastTickAt = null;
+        state.LastAppTransitionCheckAt = null;
         state.LastTrackedAppName = TrackingRules.UnassignedAppName;
     }
 }
