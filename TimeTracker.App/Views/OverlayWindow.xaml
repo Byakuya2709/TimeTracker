@@ -144,7 +144,7 @@
                             Foreground="#6A2E2E"
                             Content="x"
                             Margin="8,5,-8,5"
-                    
+                            FontWeight="Bold"
                             Panel.ZIndex="10"
                             Click="ExitAppButton_Click">
 
@@ -164,7 +164,7 @@
 
                                     <!-- hover -->
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="bg" Property="Background" Value="Red"/>
+                                        <Setter TargetName="bg" Property="Background" Value="DarkRed"/>
                                         <Setter TargetName="content"
                                                 Property="TextElement.Foreground"
                                                 Value="White"/>

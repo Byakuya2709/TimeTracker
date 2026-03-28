@@ -13,6 +13,8 @@
                 <ResourceDictionary Source="Resourses/Fonts.xaml"/>
                 <ResourceDictionary Source="Styles/IconPathStyle.xaml"/>
                 <ResourceDictionary Source="Styles/RadioButton.xaml"/>
+                <ResourceDictionary Source="Styles/ModernSlider.xaml"/>
+                <ResourceDictionary Source="Styles/Button.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Converter -->

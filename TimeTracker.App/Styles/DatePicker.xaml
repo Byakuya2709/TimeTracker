@@ -11,26 +11,34 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="DatePicker">
-                    <Border CornerRadius="8"
+                    <Grid x:Name="LayoutRoot">
+                        <Border CornerRadius="8"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
-                        <Grid>
-                            <DatePickerTextBox x:Name="PART_TextBox"
+                            <Grid>
+                                <DatePickerTextBox x:Name="PART_TextBox"
                                                BorderThickness="0"
                                                Background="Transparent"
                                                VerticalContentAlignment="Center"
-                                               Padding="14,2,0,2"/>
-
-                            <Button x:Name="PART_Button"
+                                               Padding="14,2,30,2"/>
+                                <Button x:Name="PART_Button"
                                     Width="28"
                                     HorizontalAlignment="Right"
                                     Background="Transparent"
-                                    BorderThickness="0">
-                                <TextBlock Text="📅" FontSize="14"/>
-                            </Button>
-                        </Grid>
-                    </Border>
+                                    BorderThickness="0"
+                                    Cursor="Hand">
+                                    <TextBlock Text="📅" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                </Button>
+                            </Grid>
+                        </Border>
+
+                        <Popup x:Name="PART_Popup"
+                           AllowsTransparency="True"
+                           Placement="Bottom"
+                           PlacementTarget="{Binding ElementName=LayoutRoot}"
+                           StaysOpen="False" />
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

@@ -11,7 +11,7 @@
 
     <Style TargetType="Border" x:Key="SessionShellStyle" BasedOn="{StaticResource CardStyle}">
         <Setter Property="Background" Value="#FCFEFB"/>
-        <Setter Property="BorderBrush" Value="#CFDACB"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
         <Setter Property="CornerRadius" Value="14"/>
     </Style>
 
