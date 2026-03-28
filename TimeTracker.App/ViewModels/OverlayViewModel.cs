@@ -275,12 +275,15 @@ public sealed class OverlayViewModel : ViewModelBase, IDisposable
 
     private void OnTimerTick(object? sender, EventArgs e)
     {
-        DateTime now = DateTime.Now;
 
+        
         if (!IsRecording)
         {
             return;
         }
+        
+        DateTime now = DateTime.Now;
+
 
         UpdateElapsedDisplay(now);
         RefreshTrackingSnapshot(forceRefresh: false, now);

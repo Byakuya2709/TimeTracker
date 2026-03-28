@@ -20,13 +20,15 @@ public class Win32ActiveAppReader : IActiveAppReader, IIdleThresholdConfigurable
     private const int GwlExstyle = -20;
     private const int WsExToolwindow = 0x00000080;
     private const int MaxProcessNameCacheSize = 512;
+    private const int BrowserResolutionRefreshIntervalSeconds = 2;
 
     private string _lastKnownAppDisplayName = UnknownAppName;
     private IntPtr _lastForegroundWindow = IntPtr.Zero;
     private string _lastResolvedAppName = UnknownAppName;
     private uint _idleThresholdMilliseconds;
+    private DateTime _lastBrowserResolutionAtUtc = DateTime.MinValue;
 
-    private static readonly ConcurrentDictionary<int, string> ProcessDisplayNameCache = new();
+    private static readonly ConcurrentDictionary<int, ProcessCacheEntry> ProcessCache = new();
     private static readonly BrowserAddressBarReader BrowserAddressBarReader = new();
 
     public Win32ActiveAppReader()
@@ -50,6 +52,7 @@ public class Win32ActiveAppReader : IActiveAppReader, IIdleThresholdConfigurable
         {
             _lastForegroundWindow = IntPtr.Zero;
             _lastResolvedAppName = IdleAppName;
+            _lastBrowserResolutionAtUtc = DateTime.MinValue;
             return IdleAppName;
         }
 
@@ -59,9 +62,24 @@ public class Win32ActiveAppReader : IActiveAppReader, IIdleThresholdConfigurable
             return _lastKnownAppDisplayName;
         }
 
-        if (foregroundWindow == _lastForegroundWindow && !IsSupportedBrowserWindow(foregroundWindow))
+        bool isBrowserWindow = IsSupportedBrowserWindow(foregroundWindow);
+
+        if (foregroundWindow == _lastForegroundWindow)
         {
-            return _lastResolvedAppName;
+            if (!isBrowserWindow)
+            {
+                return _lastResolvedAppName;
+            }
+
+            if (DateTime.UtcNow - _lastBrowserResolutionAtUtc < TimeSpan.FromSeconds(BrowserResolutionRefreshIntervalSeconds))
+            {
+                return _lastResolvedAppName;
+            }
+        }
+
+        if (!isBrowserWindow)
+        {
+            _lastBrowserResolutionAtUtc = DateTime.MinValue;
         }
 
         // When desktop is foreground (e.g., user pressed Show Desktop / minimized all apps),
@@ -70,6 +88,7 @@ public class Win32ActiveAppReader : IActiveAppReader, IIdleThresholdConfigurable
         {
             _lastForegroundWindow = foregroundWindow;
             _lastResolvedAppName = UnknownAppName;
+            _lastBrowserResolutionAtUtc = DateTime.MinValue;
             return UnknownAppName;
         }
 
@@ -78,6 +97,11 @@ public class Win32ActiveAppReader : IActiveAppReader, IIdleThresholdConfigurable
             _lastKnownAppDisplayName = foregroundAppName;
             _lastForegroundWindow = foregroundWindow;
             _lastResolvedAppName = foregroundAppName;
+            if (isBrowserWindow)
+            {
+                _lastBrowserResolutionAtUtc = DateTime.UtcNow;
+            }
+
             return foregroundAppName;
         }
 
@@ -86,11 +110,21 @@ public class Win32ActiveAppReader : IActiveAppReader, IIdleThresholdConfigurable
             _lastKnownAppDisplayName = fallbackAppName;
             _lastForegroundWindow = foregroundWindow;
             _lastResolvedAppName = fallbackAppName;
+            if (isBrowserWindow)
+            {
+                _lastBrowserResolutionAtUtc = DateTime.UtcNow;
+            }
+
             return fallbackAppName;
         }
 
         _lastForegroundWindow = foregroundWindow;
         _lastResolvedAppName = _lastKnownAppDisplayName;
+        if (isBrowserWindow)
+        {
+            _lastBrowserResolutionAtUtc = DateTime.UtcNow;
+        }
+
         return _lastKnownAppDisplayName;
     }
 
@@ -153,29 +187,31 @@ public class Win32ActiveAppReader : IActiveAppReader, IIdleThresholdConfigurable
             return UnknownAppName;
         }
 
-        try
+        int pid = (int)processId;
+        if (ProcessCache.TryGetValue(pid, out ProcessCacheEntry cachedEntry))
         {
-            int pid = (int)processId;
-            Process process = Process.GetProcessById(pid);
-            string processName = process.ProcessName;
-
-            string displayName = ProcessDisplayNameCache.TryGetValue(pid, out string? cachedName)
-                && !string.IsNullOrWhiteSpace(cachedName)
-                ? cachedName
-                : GetDisplayNameFromProcess(process);
-
-            if (!string.IsNullOrWhiteSpace(displayName)
-                && !displayName.Equals(UnknownAppName, StringComparison.OrdinalIgnoreCase))
+            if (!cachedEntry.IsBrowser)
             {
-                if (ProcessDisplayNameCache.Count > MaxProcessNameCacheSize)
-                {
-                    ProcessDisplayNameCache.Clear();
-                }
-
-                ProcessDisplayNameCache[pid] = displayName;
+                return cachedEntry.DisplayName;
             }
 
-            if (BrowserAddressBarReader.IsSupportedBrowser(processName)
+            if (BrowserAddressBarReader.TryResolveTrackingAppName(windowHandle, cachedEntry.DisplayName, out string trackedBrowserAppName))
+            {
+                return trackedBrowserAppName;
+            }
+
+            return cachedEntry.DisplayName;
+        }
+
+        try
+        {
+            using Process process = Process.GetProcessById(pid);
+            string processName = process.ProcessName;
+            string displayName = GetDisplayNameFromProcess(process);
+            bool isBrowserProcess = BrowserAddressBarReader.IsSupportedBrowser(processName);
+            CacheProcessInfo(pid, displayName, isBrowserProcess);
+
+            if (isBrowserProcess
                 && BrowserAddressBarReader.TryResolveTrackingAppName(windowHandle, displayName, out string trackingAppName))
             {
                 return trackingAppName;
@@ -204,13 +240,40 @@ public class Win32ActiveAppReader : IActiveAppReader, IIdleThresholdConfigurable
 
         try
         {
-            Process process = Process.GetProcessById((int)processId);
-            return BrowserAddressBarReader.IsSupportedBrowser(process.ProcessName);
+            int pid = (int)processId;
+
+            if (ProcessCache.TryGetValue(pid, out ProcessCacheEntry cachedEntry))
+            {
+                return cachedEntry.IsBrowser;
+            }
+
+            using Process process = Process.GetProcessById(pid);
+            string processName = process.ProcessName;
+            string displayName = GetDisplayNameFromProcess(process);
+            bool isBrowserProcess = BrowserAddressBarReader.IsSupportedBrowser(processName);
+            CacheProcessInfo(pid, displayName, isBrowserProcess);
+            return isBrowserProcess;
         }
         catch
         {
             return false;
         }
+    }
+
+    private static void CacheProcessInfo(int pid, string displayName, bool isBrowser)
+    {
+        if (string.IsNullOrWhiteSpace(displayName)
+            || displayName.Equals(UnknownAppName, StringComparison.OrdinalIgnoreCase))
+        {
+            displayName = UnknownAppName;
+        }
+
+        if (ProcessCache.Count > MaxProcessNameCacheSize)
+        {
+            ProcessCache.Clear();
+        }
+
+        ProcessCache[pid] = new ProcessCacheEntry(displayName, isBrowser);
     }
 
     private static string GetDisplayNameFromProcess(Process process)
@@ -367,6 +430,8 @@ public class Win32ActiveAppReader : IActiveAppReader, IIdleThresholdConfigurable
         public uint cbSize;
         public uint dwTime;
     }
+
+    private readonly record struct ProcessCacheEntry(string DisplayName, bool IsBrowser);
 
     [DllImport("user32.dll")]
     private static extern IntPtr GetForegroundWindow();
