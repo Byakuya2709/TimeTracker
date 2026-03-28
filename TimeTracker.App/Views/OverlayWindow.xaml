@@ -62,7 +62,7 @@
         </Border>
 
 
- <Border Grid.Row="1"
+        <Border Grid.Row="1"
                 Grid.Column="1"
                 CornerRadius="20"
                 BorderBrush="#44FFFFFF"
@@ -92,7 +92,7 @@
                            VerticalAlignment="Center"
                            TextWrapping="Wrap"
                            Padding="0,10"
-                           Text="Bộ đếm sẽ có đỗ trễ từ 2-5s do tối ưu hiệu năng."/>
+                           Text="Bộ đếm sẽ có đỗ trễ từ 2-5s vì lí do tối ưu hiệu năng."/>
             </Grid>
         </Border>
 
@@ -117,19 +117,66 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <Border Grid.Row="0"
-                        Padding="10,8"
-                        CornerRadius="12"
-                        Background="#55FFFFFF"
-                        BorderBrush="#22000000"
-                        BorderThickness="0,0,0,1">
-                    <TextBlock FontSize="14"
-                               FontWeight="SemiBold"
-                               Foreground="#1A1C1C"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Center"
-                               Text="{Binding CurrentAppName}"/>
-                </Border>
+                <Grid Grid.Row="0" ClipToBounds="False">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="9*" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0"
+                            Padding="10,8"
+                            CornerRadius="12"
+                            Background="#55FFFFFF"
+                            BorderBrush="#22000000"
+                            BorderThickness="0,0,0,1">
+                        <TextBlock FontSize="14"
+                           FontWeight="SemiBold"
+                           Foreground="#1A1C1C"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           Text="{Binding CurrentAppName}"/>
+                    </Border>
+
+                    <Button Grid.Column="1"
+                            Height="24"
+                            Background="#F1D9D9"
+                            BorderBrush="#D4B2B2"
+                            Foreground="#6A2E2E"
+                            Content="x"
+                            Margin="8,5,-8,5"
+                    
+                            Panel.ZIndex="10"
+                            Click="ExitAppButton_Click">
+
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="bg" Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="16">
+                                    <ContentPresenter 
+                                        x:Name="content"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"/>
+                                </Border>
+
+                                <ControlTemplate.Triggers>
+
+                                    <!-- hover -->
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="bg" Property="Background" Value="Red"/>
+                                        <Setter TargetName="content"
+                                                Property="TextElement.Foreground"
+                                                Value="White"/>
+                                    </Trigger>
+
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+
+                    </Button>
+                </Grid>
+
 
                 <StackPanel Grid.Row="1" Margin="0,14,0,0" HorizontalAlignment="Center">
                     <TextBlock FontSize="34"
@@ -183,41 +230,6 @@
                     </Grid>
                 </Border>
 
-                <Border Grid.Row="3"
-                        Margin="0,12,0,0"
-                        Padding="8"
-                        CornerRadius="12"
-                        Background="#4DFFFFFF"
-                        BorderBrush="#22000000"
-                        BorderThickness="1">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="8"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="8"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Button Grid.Column="0"
-                                Height="30"
-                                FontSize="11"
-                                FontWeight="SemiBold"
-                                Content="Mở Main"
-                                Click="OpenMainWindowButton_Click"/>
-
-                        <Button Grid.Column="4"
-                                Height="30"
-                                FontSize="11"
-                                FontWeight="SemiBold"
-                                Background="#F1D9D9"
-                                BorderBrush="#D4B2B2"
-                                Foreground="#6A2E2E"
-                                Content="Thoát App"
-                                Click="ExitAppButton_Click"/>
-                    </Grid>
-                </Border>
-
 
                 <Border Grid.Row="4"
                         Margin="0,12,0,0"
@@ -234,23 +246,31 @@
                                      GroupName="PlayerControls"
                                      IsChecked="{Binding IsRecording, Mode=OneWay}"
                                      Command="{Binding StartCommand}"
-                                     Style="{StaticResource ControlButtonStyle}">
-                            <Viewbox Width="14" Height="14">
+                                     Style="{StaticResource ControlButtonStyle}"
+                                     >
+                            <Viewbox Width="14" Height="14" Visibility="{Binding ShowPlayIcon, Converter={StaticResource BooleanToVisibilityConverter}}"  >
                                 <Path Style="{StaticResource IconPathStyle}" Data="M2,0 L12,7 L2,14 Z"/>
                             </Viewbox>
                         </RadioButton>
+                        <Border Grid.Column="0" Background="#22006947" CornerRadius="10" 
+                                Visibility="{Binding IsPaused, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                 IsHitTestVisible="False">
 
-                        <RadioButton Grid.Column="1"
+                        </Border>
+
+                        <RadioButton Grid.Column="0"
                                      GroupName="PlayerControls"
                                      IsChecked="{Binding IsPaused, Mode=OneWay}"
                                      Command="{Binding PauseCommand}"
-                                     Style="{StaticResource ControlButtonStyle}">
+                                     Style="{StaticResource ControlButtonStyle}"
+                                      Visibility="{Binding IsRecording, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                     >
                             <Viewbox Width="14" Height="14">
                                 <Path Style="{StaticResource IconPathStyle}" Data="M1,0 L5,0 L5,14 L1,14 Z M9,0 L13,0 L13,14 L9,14 Z"/>
                             </Viewbox>
                         </RadioButton>
 
-                        <RadioButton Grid.Column="2"
+                        <RadioButton Grid.Column="1"
                                      GroupName="PlayerControls"
                                      IsChecked="{Binding IsStopped, Mode=OneWay}"
                                      Command="{Binding StopCommand}"
@@ -259,6 +279,46 @@
                                 <Path Style="{StaticResource IconPathStyle}" Data="M2,2 L12,2 L12,12 L2,12 Z"/>
                             </Viewbox>
                         </RadioButton>
+
+                        <Button Grid.Column="2"
+                                Background="Transparent"
+                                BorderBrush="Transparent"
+                                Click="OpenMainWindowButton_Click">
+
+                            <Viewbox Width="18" Height="18">
+                                <materialDesign:PackIcon Kind="Settings" Width="22" Height="22"/>
+                            </Viewbox>
+
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border x:Name="bg"
+                                                    Background="Transparent"
+                                                    CornerRadius="4">
+
+                                                    <ContentPresenter 
+                                                            HorizontalAlignment="Center" 
+                                                            VerticalAlignment="Center"/>
+
+                                                </Border>
+
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="bg"
+                                                                Property="Background"
+                                                                Value="#11006947"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+
+                        </Button>
                     </Grid>
                 </Border>
             </Grid>

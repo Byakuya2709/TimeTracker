@@ -115,16 +115,29 @@ public sealed class OverlayViewModel : ViewModelBase, IDisposable
         private set => SetProperty(ref _isRecording, value);
     }
 
+    public bool ShowPlayIcon => IsPaused || IsStopped;
     public bool IsPaused
     {
         get => _isPaused;
-        private set => SetProperty(ref _isPaused, value);
+        private set
+        {
+            if (SetProperty(ref _isPaused, value))
+            {
+                OnPropertyChanged(nameof(ShowPlayIcon));
+            }
+        }
     }
 
     public bool IsStopped
     {
         get => _isStopped;
-        private set => SetProperty(ref _isStopped, value);
+        private set
+        {
+            if (SetProperty(ref _isStopped, value))
+            {
+                OnPropertyChanged(nameof(ShowPlayIcon));
+            }
+        }
     }
 
     public int OverlayOpacity
