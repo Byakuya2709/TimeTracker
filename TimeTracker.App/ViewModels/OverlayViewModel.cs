@@ -10,7 +10,6 @@ namespace TimeTracker.App.ViewModels;
 public sealed class OverlayViewModel : ViewModelBase, IDisposable
 {
     private static readonly TimeSpan TrackingSnapshotRefreshInterval = TimeSpan.FromSeconds(3);
-    private static readonly TimeSpan OverlaySettingsRefreshInterval = TimeSpan.FromSeconds(2);
 
     private readonly ITrackingRuntimeService _activityTracker;
     private readonly IUserSettingsService _userSettingsService;
@@ -26,7 +25,6 @@ public sealed class OverlayViewModel : ViewModelBase, IDisposable
     private TimeSpan _elapsedDisplayBase = TimeSpan.Zero;
     private DateTime? _elapsedDisplayRunningSince;
     private DateTime? _lastSnapshotRefreshAt;
-    private DateTime? _lastSettingsRefreshAt;
 
     private string _currentAppName = "Dang khoi tao...";
     private string _elapsedTime = "00:00:00";
@@ -53,6 +51,7 @@ public sealed class OverlayViewModel : ViewModelBase, IDisposable
         _startCommand = new RelayCommand(StartTracking, () => !_isRecording);
         _pauseCommand = new RelayCommand(PauseTracking, () => _isRecording);
         _stopCommand = new RelayCommand(RequestStopTracking, () => !_isStopped && !_isStopping);
+        _userSettingsService.SettingsChanged += OnUserSettingsChanged;
 
         LoadUserSettings();
         _timer.Start();
@@ -278,8 +277,6 @@ public sealed class OverlayViewModel : ViewModelBase, IDisposable
     {
         DateTime now = DateTime.Now;
 
-        RefreshOverlaySettingsIfNeeded(now);
-
         if (!IsRecording)
         {
             return;
@@ -302,25 +299,9 @@ public sealed class OverlayViewModel : ViewModelBase, IDisposable
         }
     }
 
-    private void RefreshOverlaySettingsIfNeeded(DateTime now)
+    private void OnUserSettingsChanged(UserSettingsModel settings)
     {
-        if (_lastSettingsRefreshAt is not null
-            && now - _lastSettingsRefreshAt.Value < OverlaySettingsRefreshInterval)
-        {
-            return;
-        }
-
-        _lastSettingsRefreshAt = now;
-
-        try
-        {
-            UserSettingsModel settings = _userSettingsService.GetUserSettings();
-            ApplyOverlaySettings(settings);
-        }
-        catch
-        {
-            // Skip refresh errors to keep overlay responsive.
-        }
+        ApplyOverlaySettings(settings);
     }
 
     private void ApplyOverlaySettings(UserSettingsModel settings)
@@ -346,6 +327,8 @@ public sealed class OverlayViewModel : ViewModelBase, IDisposable
 
     public void Dispose()
     {
+        _userSettingsService.SettingsChanged -= OnUserSettingsChanged;
+
         if (!IsStopped)
         {
             _activityTracker.Stop();

@@ -12,6 +12,8 @@ public class UserSettingsService : IUserSettingsService
 
     private readonly IUserSettingsRepository _userSettingsStore;
 
+    public event Action<UserSettingsModel>? SettingsChanged;
+
     public UserSettingsService(IUserSettingsRepository userSettingsStore)
     {
         _userSettingsStore = userSettingsStore;
@@ -39,6 +41,8 @@ public class UserSettingsService : IUserSettingsService
             OverlayOpacity = settings.OverlayOpacity,
             OverlayPosition = settings.OverlayPosition
         });
+
+        SettingsChanged?.Invoke(settings);
     }
 
     public TimeSpan ResolveIdleThreshold()
