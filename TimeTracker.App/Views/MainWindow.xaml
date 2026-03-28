@@ -15,6 +15,15 @@
         FontFamily="pack://application:,,,/TimeTracker.App;component/Resourses/Assets/Fonts/#Inter"
         Background="#E7EDE1">
 
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Styles/DatePicker.xaml"/>
+                <ResourceDictionary Source="../Styles/MainWindowStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
 
     <Grid>
         <Grid.ColumnDefinitions>

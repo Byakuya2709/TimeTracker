@@ -70,6 +70,7 @@ public partial class App : System.Windows.Application
 		if (sender is MainWindow dashboardWindow)
 		{
 			dashboardWindow.Closed -= OnDashboardClosed;
+			DisposeDataContextIfNeeded(dashboardWindow.DataContext);
 			dashboardWindow.DataContext = null;
 			dashboardWindow.Content = null;
 		}
@@ -95,6 +96,7 @@ public partial class App : System.Windows.Application
 			dashboardWindow.Close();
 		}
 
+		DisposeDataContextIfNeeded(dashboardWindow.DataContext);
 		dashboardWindow.DataContext = null;
 		dashboardWindow.Content = null;
 		_dashboardWindow = null;
@@ -114,9 +116,18 @@ public partial class App : System.Windows.Application
 			overlayWindow.Close();
 		}
 
+		DisposeDataContextIfNeeded(overlayWindow.DataContext);
 		overlayWindow.DataContext = null;
 		overlayWindow.Content = null;
 		_overlayWindow = null;
+	}
+
+	private static void DisposeDataContextIfNeeded(object? dataContext)
+	{
+		if (dataContext is IDisposable disposable)
+		{
+			disposable.Dispose();
+		}
 	}
 
 	protected override void OnExit(ExitEventArgs e)

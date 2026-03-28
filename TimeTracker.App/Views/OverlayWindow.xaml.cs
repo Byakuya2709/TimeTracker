@@ -11,9 +11,9 @@ namespace TimeTracker.App;
 public partial class OverlayWindow : Window
 {
     private const double EdgeMargin = 16d;
-    private readonly MainViewModel _viewModel;
+    private readonly OverlayViewModel _viewModel;
 
-    public OverlayWindow(MainViewModel viewModel)
+    public OverlayWindow(OverlayViewModel viewModel)
     {
         InitializeComponent();
         _viewModel = viewModel;
@@ -45,7 +45,7 @@ public partial class OverlayWindow : Window
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(MainViewModel.OverlayPosition))
+        if (e.PropertyName == nameof(OverlayViewModel.OverlayPosition))
         {
             ApplyOverlayPlacement();
         }

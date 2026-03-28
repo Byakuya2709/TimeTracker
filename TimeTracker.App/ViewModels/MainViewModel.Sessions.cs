@@ -232,4 +232,14 @@ public partial class MainViewModel
             AppUsageProgressItems = appUsageProgressItems
         };
     }
+
+    private static string FormatDuration(TimeSpan duration)
+    {
+        if (duration.TotalHours >= 1)
+        {
+            return duration.ToString(@"hh\:mm\:ss");
+        }
+
+        return duration.ToString(@"mm\:ss");
+    }
 }
