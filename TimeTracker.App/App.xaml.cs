@@ -1,11 +1,16 @@
 ﻿using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using TimeTracker.App.Services;
+using TimeTracker.App.ViewModels;
 
 namespace TimeTracker.App;
 public partial class App : System.Windows.Application
 {
+	private static readonly TimeSpan ShutdownStopTimeout = TimeSpan.FromSeconds(5);
+
 	private ServiceProvider? _serviceProvider;
 	private OverlayWindow? _overlayWindow;
 	private MainWindow? _dashboardWindow;
@@ -22,6 +27,8 @@ public partial class App : System.Windows.Application
 		_overlayWindow = _serviceProvider.GetRequiredService<OverlayWindow>();
 		_overlayWindow.Show();
 	}
+
+
 
 	public void OpenOrActivateMainWindow()
 	{
@@ -52,17 +59,37 @@ public partial class App : System.Windows.Application
 		_dashboardWindow.Show();
 	}
 
-	public void CloseMainWindowOnly()
+	public async Task ExitEntireApplicationAsync(CancellationToken cancellationToken = default)
 	{
-		ReleaseDashboardWindowResources(closeIfVisible: true);
-	}
+		using CancellationTokenSource stopTimeoutSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+		stopTimeoutSource.CancelAfter(ShutdownStopTimeout);
 
-	public void ExitEntireApplication()
-	{
+		try
+		{
+			await EnsureOverlayTrackingStoppedBeforeExitAsync(stopTimeoutSource.Token);
+		}
+		catch (OperationCanceledException)
+		{
+			// Continue shutdown when stop exceeds timeout or caller cancels.
+		}
+
 		ReleaseDashboardWindowResources(closeIfVisible: true);
 		ReleaseOverlayWindowResources(closeIfVisible: true);
 
 		Shutdown();
+	}
+
+	public void ExitEntireApplication()
+	{
+		_ = ExitEntireApplicationAsync();
+	}
+
+	private async Task EnsureOverlayTrackingStoppedBeforeExitAsync(CancellationToken cancellationToken)
+	{
+		if (_overlayWindow?.DataContext is OverlayViewModel overlayViewModel)
+		{
+			await overlayViewModel.EnsureStoppedAsync(cancellationToken);
+		}
 	}
 
 	private void OnDashboardClosed(object? sender, EventArgs e)
@@ -79,6 +106,8 @@ public partial class App : System.Windows.Application
 		{
 			_dashboardWindow = null;
 		}
+
+		ProcessMemoryCleaner.CollectAndTrim();
 	}
 
 	private void ReleaseDashboardWindowResources(bool closeIfVisible)
@@ -100,6 +129,7 @@ public partial class App : System.Windows.Application
 		dashboardWindow.DataContext = null;
 		dashboardWindow.Content = null;
 		_dashboardWindow = null;
+		ProcessMemoryCleaner.CollectAndTrim();
 	}
 
 	private void ReleaseOverlayWindowResources(bool closeIfVisible)

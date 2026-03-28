@@ -1,4 +1,6 @@
 using TimeTracker.Application.Models;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace TimeTracker.Application.Abstractions;
 
@@ -13,6 +15,8 @@ public interface ITrackingRuntimeService
     void Start();
 
     void Pause();
+
+    Task StopAsync(CancellationToken cancellationToken = default);
 
     void Stop();
 }

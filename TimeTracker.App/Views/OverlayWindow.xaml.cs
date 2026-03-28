@@ -1,6 +1,10 @@
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Runtime;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
-using System.ComponentModel;
+using System.Threading.Tasks;
 using TimeTracker.App.ViewModels;
 
 namespace TimeTracker.App;
@@ -25,6 +29,31 @@ public partial class OverlayWindow : Window
         _viewModel.PropertyChanged += OnViewModelPropertyChanged;
     }
 
+
+    protected override async void OnContentRendered(EventArgs e)
+    {
+        base.OnContentRendered(e);
+
+        await Task.Delay(3000);
+
+        await Task.Run(() =>
+        {
+            CollectAndTrimProcessMemory();
+        });
+    }
+
+    private static void CollectAndTrimProcessMemory()
+    {
+        GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+        GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, blocking: true, compacting: true);
+        GC.WaitForPendingFinalizers();
+        GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, blocking: true, compacting: true);
+
+        IntPtr processHandle = Process.GetCurrentProcess().Handle;
+        _ = EmptyWorkingSet(processHandle);
+    }
+    [DllImport("psapi.dll")]
+    private static extern bool EmptyWorkingSet(IntPtr hProcess);
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
         ApplyOverlayPlacement();
@@ -109,6 +138,17 @@ public partial class OverlayWindow : Window
 
     private void ExitAppButton_Click(object sender, RoutedEventArgs e)
     {
-        GetAppInstance()?.ExitEntireApplication();
+        _ = ExitAppAsync();
+    }
+
+    private async Task ExitAppAsync()
+    {
+        App? app = GetAppInstance();
+        if (app is null)
+        {
+            return;
+        }
+
+        await app.ExitEntireApplicationAsync();
     }
 }

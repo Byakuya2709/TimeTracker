@@ -1,5 +1,7 @@
 using System.Windows.Input;
+using System.Threading;
 using System.Windows.Threading;
+using System.Threading.Tasks;
 using TimeTracker.Application.Abstractions;
 using TimeTracker.Application.Models;
 
@@ -20,6 +22,7 @@ public sealed class OverlayViewModel : ViewModelBase, IDisposable
     private bool _isRecording;
     private bool _isPaused;
     private bool _isStopped = true;
+    private bool _isStopping;
     private TimeSpan _elapsedDisplayBase = TimeSpan.Zero;
     private DateTime? _elapsedDisplayRunningSince;
     private DateTime? _lastSnapshotRefreshAt;
@@ -49,7 +52,7 @@ public sealed class OverlayViewModel : ViewModelBase, IDisposable
 
         _startCommand = new RelayCommand(StartTracking, () => !_isRecording);
         _pauseCommand = new RelayCommand(PauseTracking, () => _isRecording);
-        _stopCommand = new RelayCommand(StopTracking, () => !_isStopped);
+        _stopCommand = new RelayCommand(RequestStopTracking, () => !_isStopped && !_isStopping);
 
         LoadUserSettings();
         _timer.Start();
@@ -161,9 +164,35 @@ public sealed class OverlayViewModel : ViewModelBase, IDisposable
         UpdateActionState(TrackingState.Paused);
     }
 
-    private void StopTracking()
+    private void RequestStopTracking()
     {
-        _activityTracker.Stop();
+        _ = StopTrackingAsync(CancellationToken.None);
+    }
+
+    private async Task StopTrackingAsync(CancellationToken cancellationToken)
+    {
+        if (IsStopped || _isStopping)
+        {
+            return;
+        }
+
+        _isStopping = true;
+        _stopCommand.RaiseCanExecuteChanged();
+
+        try
+        {
+            await _activityTracker.StopAsync(cancellationToken);
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+        finally
+        {
+            _isStopping = false;
+            _stopCommand.RaiseCanExecuteChanged();
+        }
+
         ResetElapsedDisplayClock();
         UpdateActionState(TrackingState.Stopped);
 
@@ -307,10 +336,22 @@ public sealed class OverlayViewModel : ViewModelBase, IDisposable
             : OverlayAnchor.TopRight;
     }
 
+    public async Task EnsureStoppedAsync(CancellationToken cancellationToken = default)
+    {
+        if (!IsStopped)
+        {
+            await StopTrackingAsync(cancellationToken);
+        }
+    }
+
     public void Dispose()
     {
+        if (!IsStopped)
+        {
+            _activityTracker.Stop();
+        }
+
         _timer.Stop();
         _timer.Tick -= OnTimerTick;
-        _activityTracker.Stop();
     }
 }

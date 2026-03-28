@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
+using System.Threading.Tasks;
 using TimeTracker.Domain.Interfaces;
 using TimeTracker.Domain.Entities;
 
@@ -13,7 +15,7 @@ public class SqliteActivityLogStore : ITrackingSessionRepository
         _dbContextFactory = dbContextFactory;
     }
 
-    public void AddTrackingSession(TrackingSession session)
+    public async Task AddTrackingSessionAsync(TrackingSession session, CancellationToken cancellationToken = default)
     {
         using TimeTrackerDbContext dbContext = _dbContextFactory.CreateDbContext();
 
@@ -28,7 +30,7 @@ public class SqliteActivityLogStore : ITrackingSessionRepository
         }
 
         dbContext.TrackingSessions.Add(session);
-        dbContext.SaveChanges();
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 
     public IReadOnlyList<TrackingSession> GetTrackingSessions()

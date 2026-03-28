@@ -1,10 +1,12 @@
 using TimeTracker.Domain.Entities;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace TimeTracker.Domain.Interfaces;
 
 public interface ITrackingSessionRepository
 {
-    void AddTrackingSession(TrackingSession session);
+    Task AddTrackingSessionAsync(TrackingSession session, CancellationToken cancellationToken = default);
 
     IReadOnlyList<TrackingSession> GetTrackingSessions();
 

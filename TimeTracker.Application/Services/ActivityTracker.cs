@@ -1,4 +1,6 @@
 using TimeTracker.Application.Abstractions;
+using System.Threading;
+using System.Threading.Tasks;
 using TimeTracker.Application.Models;
 using TimeTracker.Application.Services.Tracking;
 using TimeTracker.Domain.Interfaces;
@@ -45,9 +47,14 @@ public sealed class ActivityTracker : ITrackingRuntimeService
         _pauseTrackingUseCase.Execute(_sessionState, DateTime.Now);
     }
 
+    public Task StopAsync(CancellationToken cancellationToken = default)
+    {
+        return _stopTrackingUseCase.ExecuteAsync(_sessionState, _activityLogStore, DateTime.Now, cancellationToken);
+    }
+
 
     public void Stop()
     {
-        _stopTrackingUseCase.Execute(_sessionState, _activityLogStore, DateTime.Now);
+        StopAsync(CancellationToken.None).GetAwaiter().GetResult();
     }
 }

@@ -1,4 +1,6 @@
 using TimeTracker.Application.Abstractions;
+using System.Threading;
+using System.Threading.Tasks;
 using TimeTracker.Application.Models;
 using TimeTracker.Domain.Entities;
 using TimeTracker.Domain.Interfaces;
@@ -8,7 +10,11 @@ namespace TimeTracker.Application.Services.Tracking;
 public class StopTrackingUseCase
 {
     // Stops tracking and persists one summarized session record.
-    public void Execute(TrackingSessionState state, ITrackingSessionRepository activityLogStore, DateTime now)
+    public async Task ExecuteAsync(
+        TrackingSessionState state,
+        ITrackingSessionRepository activityLogStore,
+        DateTime now,
+        CancellationToken cancellationToken = default)
     {
         if (state.State == TrackingState.Running)
         {
@@ -19,11 +25,20 @@ public class StopTrackingUseCase
         state.LastAppTransitionCheckAt = null;
         state.State = TrackingState.Stopped;
 
-        PersistSessionIfAny(state, activityLogStore, now);
+        await PersistSessionIfAnyAsync(state, activityLogStore, now, cancellationToken);
         state.SessionStartedAt = null;
     }
 
-    private static void PersistSessionIfAny(TrackingSessionState state, ITrackingSessionRepository activityLogStore, DateTime endedAt)
+    public void Execute(TrackingSessionState state, ITrackingSessionRepository activityLogStore, DateTime now)
+    {
+        ExecuteAsync(state, activityLogStore, now, CancellationToken.None).GetAwaiter().GetResult();
+    }
+
+    private static async Task PersistSessionIfAnyAsync(
+        TrackingSessionState state,
+        ITrackingSessionRepository activityLogStore,
+        DateTime endedAt,
+        CancellationToken cancellationToken)
     {
         if (!state.SessionStartedAt.HasValue)
         {
@@ -57,6 +72,6 @@ public class StopTrackingUseCase
             AppUsages = appUsages
         };
 
-        activityLogStore.AddTrackingSession(session);
+        await activityLogStore.AddTrackingSessionAsync(session, cancellationToken);
     }
 }

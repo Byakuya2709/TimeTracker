@@ -89,7 +89,10 @@ public partial class MainViewModel : ViewModelBase, IDisposable
     }
     public void Dispose()
     {
-        // Main dashboard VM is transient and does not own long-running resources.
+        SelectedTrackingSession = null;
+        SessionDayGroups.Clear();
+        _weekSessions.Clear();
+        _hasLoadedSessions = false;
     }
 
     private partial void InitializeSessionsPageCommands();
