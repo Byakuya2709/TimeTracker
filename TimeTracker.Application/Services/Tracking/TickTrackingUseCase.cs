@@ -10,16 +10,16 @@ public class TickTrackingUseCase
     {
         if (state.State != TrackingState.Running)
         {
-            return BuildSnapshot(state);
+            return BuildSnapshot(state, now);
         }
 
         SessionTimeAccumulator.ApplyElapsedTime(state, now);
-        TrackForegroundAppTransition(state, activeAppReader);
+        TrackForegroundAppTransition(state, activeAppReader, now);
 
-        return BuildSnapshot(state);
+        return BuildSnapshot(state, now);
     }
 
-    private static void TrackForegroundAppTransition(TrackingSessionState state, IActiveAppReader activeAppReader)
+    private static void TrackForegroundAppTransition(TrackingSessionState state, IActiveAppReader activeAppReader, DateTime now)
     {
         string activeAppName = activeAppReader.GetActiveAppName();
         string nextTrackedAppName = TrackingRules.ResolveTrackedAppName(activeAppName);
@@ -28,23 +28,25 @@ public class TickTrackingUseCase
         if (appChanged)
         {
             state.LastTrackedAppName = nextTrackedAppName;
+            state.LastAppChangedAt = now;
+            // Only count meaningful switches, not idle
+            if (!TrackingRules.IsIdleAppName(nextTrackedAppName) && !TrackingRules.IsUnassignedAppName(nextTrackedAppName))
+            {
+                state.AppSwitchCount++;
+            }
         }
     }
 
-    private static TrackingSnapshot BuildSnapshot(TrackingSessionState state)
+    private static TrackingSnapshot BuildSnapshot(TrackingSessionState state, DateTime now)
     {
-        TimeSpan currentAppElapsed = state.SessionAppDurations.TryGetValue(state.LastTrackedAppName, out var trackedDuration)
-            ? trackedDuration
-            : TimeSpan.Zero;
-
-        int score = TrackingRules.CalculateFocusScore(state.LastTrackedAppName, currentAppElapsed);
+        int score = TrackingRules.CalculateFocusScore(state, now);
 
         return new TrackingSnapshot
         {
             CurrentAppName = TrackingRules.GetDisplayAppName(state),
             FocusScore = score,
             FocusSummary = TrackingRules.GetFocusSummary(score, state.RecordedDuration, state.IdleDuration),
-            Notification = TrackingRules.GetSuggestionMessage(state.RecordedDuration, score)
+            Notification = TrackingRules.GetSuggestionMessage(state.RecordedDuration, score, state.LastTrackedAppName)
         };
     }
 }

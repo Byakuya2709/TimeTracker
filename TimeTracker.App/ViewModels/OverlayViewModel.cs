@@ -26,11 +26,11 @@ public sealed class OverlayViewModel : ViewModelBase, IDisposable
     private DateTime? _elapsedDisplayRunningSince;
     private DateTime? _lastSnapshotRefreshAt;
 
-    private string _currentAppName = "Dang khoi tao...";
+    private string _currentAppName = "Đang khởi tạo...";
     private string _elapsedTime = "00:00:00";
     private string _notification = string.Empty;
     private int _focusScore;
-    private string _focusSummary = "Diem hieu suat 0/100 - Dang cho du lieu";
+    private string _focusSummary = "Đang chờ hoạt động...";
     private int _overlayOpacity = 85;
     private OverlayAnchor _overlayPosition = OverlayAnchor.TopRight;
 
@@ -174,6 +174,8 @@ public sealed class OverlayViewModel : ViewModelBase, IDisposable
         _activityTracker.Pause();
         PauseElapsedDisplayClock(DateTime.Now);
         UpdateActionState(TrackingState.Paused);
+
+        CurrentAppName = "Tạm dừng ghi...";
     }
 
     private void RequestStopTracking()
@@ -210,7 +212,7 @@ public sealed class OverlayViewModel : ViewModelBase, IDisposable
 
         CurrentAppName = "Dang khoi tao...";
         FocusScore = 0;
-        FocusSummary = "Diem hieu suat 0/100 - Dang cho du lieu";
+        FocusSummary = "";
         Notification = string.Empty;
     }
 

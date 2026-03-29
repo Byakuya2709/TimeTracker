@@ -12,6 +12,10 @@ public class TrackingSessionState
 
     public DateTime? LastAppTransitionCheckAt { get; set; }
 
+    public DateTime? LastAppChangedAt { get; set; }
+
+    public int AppSwitchCount { get; set; }
+
     public string LastTrackedAppName { get; set; } = TrackingRules.UnassignedAppName;
 
     public TimeSpan RecordedDuration { get; set; } = TimeSpan.Zero;

@@ -225,6 +225,7 @@
                             <TextBlock FontSize="13"
                                        FontWeight="SemiBold"
                                        Foreground="#1A1C1C"
+                                       TextWrapping="Wrap"
                                        Text="{Binding FocusSummary}"/>
                         </StackPanel>
                     </Grid>
