@@ -43,7 +43,7 @@
                 <ControlTemplate TargetType="RadioButton">
                     <Border x:Name="bg" CornerRadius="10" Background="Transparent">
                         <ContentPresenter HorizontalAlignment="Left"
-                                        VerticalAlignment="Center"
+                                          VerticalAlignment="Center"
                                           Margin="16,0"/>
                     </Border>
 
@@ -56,7 +56,7 @@
 
                         <!-- selected -->
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="bg" Property="Background" Value="#22006947"/>
+                            <Setter TargetName="bg" Property="Background" Value="#006947"/>
                         </Trigger>
 
                     </ControlTemplate.Triggers>
