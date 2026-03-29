@@ -31,9 +31,9 @@ Hệ thống tính điểm không đơn thuần hoạt động theo tuyến tín
 
 - **Khởi điểm:** 0/100 Điểm.
 - **Contracted & Committed Time:** Tích lũy điểm dần dần (1.2 điểm/phút cho Contracted, 0.8 điểm/phút cho Committed). Cần sự bền bỉ để đạt điểm tối đa. Đặc biệt nếu giữ focus trên 30 phút, bạn sẽ nhận được một lượng _Bonus Logarit_ nhẹ.
-- **Tác động của Free Time:** Xem giải trí một chút (vài phút) sẽ không lập tức phá hủy điểm số của bạn. Tuy nhiên, nếu bạn chìm đắm _quá 10-15 phút_, một hàm **Exponential (Hàm mũ)** sẽ được kích hoạt $\text{(\text{Điểm trừ} = \text{phút}^{1.3} \times 0.8)}$ và làm cạn kiệt toàn bộ Focus Score một cách chóng mặt.
+- **Tác động của Free Time:** Xem giải trí một chút (vài phút) sẽ không lập tức phá hủy điểm số của bạn. Tuy nhiên, nếu bạn chìm đắm _quá 10-15 phút_, một hàm **Exponential (Hàm mũ)** sẽ được kích hoạt `(Điểm trừ = số phút^1.3 * 0.8)` và giảm toàn bộ Focus Score một cách chóng mặt.
 - **Phạt chuyển Tab/App liên tục:** Nếu ứng dụng phát hiện bạn liên tục nhảy qua lại giữa nhiều ứng dụng (Alt-Tab liên tục do mất tập trung), điểm sẽ bị trừ dần dựa trên số lần chuyển ứng dụng (Sử dụng hàm Logarit để tránh trừ quá gắt).
-- **Thưởng Focus (Continuous Bonus):** Ngược lại, nếu bạn giữ nguyên một cửa sổ (ví dụ: màn hình code) liên tục > 15 phút không rời đi, cơ chế sẽ bắt đầu thưởng thêm điểm đều đặn vì sự tập trung đáng kinh ngạc của bạn.
+- **Thưởng Focus (Continuous Bonus):** Ngược lại, nếu bạn giữ nguyên một cửa sổ (ví dụ: màn hình code) liên tục > 15 phút không rời đi, cơ chế sẽ bắt đầu thưởng thêm điểm đều đặn vì sự tập trung đáng kinh ngạc của bạn..
 
 ---
 
