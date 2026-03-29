@@ -1,0 +1,49 @@
+name: Auto Publish Release
+
+on:
+  push:
+    tags:
+      - 'v*' # Workflow sẽ tự động chạy khi bạn push một tag bắt đầu bằng chữ 'v' (VD: v1.0.0, v1.1)
+
+jobs:
+  build-and-release:
+    name: Build app and create GitHub Release
+    runs-on: windows-latest # Ứng dụng WPF bắt buộc phải build trên môi trường Windows
+
+    permissions:
+      contents: write # Cho phép GitHub Actions quyền được tạo Release
+
+    steps:
+      - name: 📦 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🛠️ Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x' # Hỗ trợ phiên bản .NET 10 mới nhất
+
+      - name: 📦 Restore Dependencies
+        run: dotnet restore TimeTracker.slnx
+
+      - name: 🚀 Publish Build (Self-Contained)
+        run: >
+          dotnet publish TimeTracker.App\TimeTracker.App.csproj 
+          -c Release 
+          -r win-x64 
+          --self-contained true 
+          -p:PublishSingleFile=true 
+          -p:IncludeNativeLibrariesForSelfExtract=true 
+          -o ./release_output
+
+      - name: 🏷️ Rename Executable
+        run: Rename-Item -Path "./release_output/TimeTracker.exe" -NewName "TimeTracker-${{ github.ref_name }}-win-x64.exe"
+
+      - name: 🎉 Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./release_output/TimeTracker-${{ github.ref_name }}-win-x64.exe
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

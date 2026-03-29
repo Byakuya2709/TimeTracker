@@ -12,7 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resourses\Assets\Fonts\Inter.ttf" />
+    <Resource Include="Resources\Assets\Fonts\Inter.ttf" />
+    <Resource Include="Resources\logo.png" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -21,6 +22,22 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+
+    <!-- 1. Tên ứng dụng và Thông tin -->
+    <AssemblyName>TimeTracker</AssemblyName> <!-- Tên file .exe xuất ra (TimeTracker.exe) -->
+    <Product>Time Tracker</Product>         <!-- Tên sản phẩm hiển thị trong Task Manager / Properties -->
+    <Title>Time Tracker App</Title>         <!-- Tựa đề ứng dụng -->
+    <Company>KangKang</Company>             <!-- Tên công ty / Tác giả -->
+    <Description>Bảng điều khiển theo dõi thời gian làm việc</Description>
+    <Copyright>Copyright © 2026</Copyright>
+
+    <!-- 2. Phiên bản -->
+    <Version>1.0.0</Version>                  <!-- Sẽ hiện 1.0.0 (chỉnh sửa khi có bản cập nhật) -->
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+
+    <!-- 3. Logo/Icon cho file .exe (Cần có file icon.ico ở thư mục ứng dụng) -->
+    <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
 
 </Project>

@@ -8,12 +8,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="TimeTracker"
+        Icon="pack://application:,,,/TimeTracker;component/Resources/logo.png"
         Width="1240"
         Height="760"
         MinWidth="980"
         MinHeight="620"
         WindowStartupLocation="CenterScreen"
-        FontFamily="pack://application:,,,/TimeTracker.App;component/Resourses/Assets/Fonts/#Inter"
+        FontFamily="pack://application:,,,/TimeTracker;component/Resources/Assets/Fonts/#Inter"
         Background="#F5F5F5">
 
     <Grid>

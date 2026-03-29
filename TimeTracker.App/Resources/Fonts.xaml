@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <FontFamily x:Key="Font.Inter">pack://application:,,,/TimeTracker.App;component/Resourses/Assets/Fonts/#Inter</FontFamily>
+    <FontFamily x:Key="Font.Inter">pack://application:,,,/TimeTracker;component/Resources/Assets/Fonts/#Inter</FontFamily>
 
     <!-- Font global -->
     <Style TargetType="{x:Type TextBlock}">

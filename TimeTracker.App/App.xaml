@@ -9,8 +9,8 @@
 
             <!-- Gộp resource ngoài -->
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Resourses/Colors.xaml"/>
-                <ResourceDictionary Source="Resourses/Fonts.xaml"/>
+                <ResourceDictionary Source="Resources/Colors.xaml"/>
+                <ResourceDictionary Source="Resources/Fonts.xaml"/>
                 <ResourceDictionary Source="Styles/IconPathStyle.xaml"/>
                 <ResourceDictionary Source="Styles/RadioButton.xaml"/>
                 <ResourceDictionary Source="Styles/ModernSlider.xaml"/>
